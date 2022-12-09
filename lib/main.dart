@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import '/backend/services/db.dart';
 
-void main() {
+void main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await DB.init();
+
   runApp(const MyApp());
 }
 
