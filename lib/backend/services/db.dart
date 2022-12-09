@@ -23,37 +23,32 @@ abstract class DB {
   static void onCreate(Database db, int version) async {
     await db.execute(
         '''
-        CREATE TABLE meditation_sound (
-          id INT UNSIGNED AUTO_INCREMENT NOT NULL,
-          PRIMARY KEY (id),
+        CREATE TABLE meditation_sound(
+          id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
           path_sound TEXT NOT NULL,
-          path_icon TEXT NOT NULL 
+          path_icon TEXT NOT NULL
         );
         
         CREATE TABLE reminder (
-          id INT UNSIGNED AUTO_INCREMENT NOT NULL,
-          PRIMARY KEY (id),
+          id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
           time TIME NOT NULL,
           is_use BIT NOT NULL DEFAULT 1
         );
         
         CREATE TABLE mood (
-          id INT UNSIGNED AUTO_INCREMENT NOT NULL,
-          PRIMARY KEY (id),
+          id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
           title TEXT NOT NULL,
           path_icon TEXT NOT NULL,
           value SMALLINT NOT NULL
         );
         
         CREATE TABLE event_category (
-          id INT UNSIGNED AUTO_INCREMENT NOT NULL,
-          PRIMARY KEY (id),
+          id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
           title VARCHAR(50) NOT NULL 
         );
         
         CREATE TABLE event (
-          id INT UNSIGNED AUTO_INCREMENT NOT NULL,
-          PRIMARY KEY (id),
+          id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
           FOREIGN KEY (id_event_category) REFERENCES event_category(id),
           title VARCHAR(50) NOT NULL,
           path_icon TEXT NOT NULL,
@@ -61,8 +56,7 @@ abstract class DB {
         );
         
         CREATE TABLE my_mood (
-          id INT UNSIGNED AUTO_INCREMENT NOT NULL,
-          PRIMARY KEY (id),
+          id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
           FOREIGN KEY (id_event) REFERENCES event(id),
           date DATETIME NOT NULL,
           comment VARCHAR(200)
