@@ -62,10 +62,10 @@ abstract class DB {
           comment VARCHAR(200)
         );
         
-        CREATE TABLE my_mood_mood (
-          FOREIGN KEY (id_mood) REFERENCES mood(id),
+        CREATE TABLE my_mood_event (
           FOREIGN KEY (id_my_mood) REFERENCES my_mood(id),
-          PRIMARY KEY (id_mood, id_my_mood)
+          FOREIGN KEY (id_event) RoodEFERENCES event(id),
+          PRIMARY KEY (id_my_mood, id_event)
         );
         '''
     );
