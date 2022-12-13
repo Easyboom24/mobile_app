@@ -54,19 +54,26 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  var title = getTitle();
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  var months = {
+    1: 'Январь',
+    2: 'Февраль',
+    3: 'Март',
+    4: 'Апрель',
+    5: 'Май',
+    6: 'Июнь',
+    7: 'Июль',
+    8: 'Август',
+    9: 'Сентябрь',
+    10: 'Октябрь',
+    11: 'Ноябрь',
+    12: 'Декабрь'
+  };
+  String title = getTitle();
+  List<int> years = getListOfYear();
+  int selectedMonthCode = DateTime.now().month;
+  int tempSelectedMonthCode = DateTime.now().month;
+  int selectedYear = DateTime.now().year;
+  int tempSelectedYear = DateTime.now().year;
 
   @override
   Widget build(BuildContext context) {
@@ -77,10 +84,14 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: buildAppBarTitleMainPage(context),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(64),
+        child: AppBar(
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          elevation: 0,
+          title: buildAppBarTitleMainPage(context),
+        ),
       ),
       body: buildBodyMainPage(),
       bottomNavigationBar: buildBottomNavigationBar(),
@@ -91,11 +102,117 @@ class _MyHomePageState extends State<MyHomePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconButton(onPressed: () {}, icon: Icon(Icons.notifications_none)),
-        Text(title),
-        IconButton(onPressed: () {}, icon: Icon(Icons.calendar_today_outlined))
+        IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.notifications_none,
+              size: 30,
+            )),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 25,
+            letterSpacing: 0.5,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        IconButton(
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return buildAlertDialog(context);
+                  });
+            },
+            icon: Icon(
+              Icons.calendar_today_outlined,
+              size: 30,
+            ))
       ],
     );
+  }
+
+  StatefulBuilder buildAlertDialog(BuildContext context) {
+    return StatefulBuilder(builder: (context, _setter){
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(28.0),
+          ),
+        ),
+        title: Text('Выберите месяц и год'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Divider(),
+            Container(
+              child: Row(
+                children: [
+                  DropdownButton(
+                      value: tempSelectedMonthCode,
+                      items: months
+                          .map((monthCode, value) {
+                        return MapEntry(
+                          monthCode,
+                          DropdownMenuItem(
+                            value: monthCode,
+                            child: Text(value),
+                          ),
+                        );
+                      })
+                          .values
+                          .toList(),
+                      onChanged: (value) {
+                        _setter(() {
+                          tempSelectedMonthCode = value!;
+                        });
+                      }),
+                  DropdownButton(
+                      value: tempSelectedYear,
+                      items: years.map((value) {
+                        return DropdownMenuItem(
+                          value: value,
+                          child: Text(value.toString()),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        _setter(() {
+                          tempSelectedYear = value!;
+                        });
+                      }),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, 'Назад');
+            },
+            child: Text(
+              'Назад',
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                selectedMonthCode = tempSelectedMonthCode;
+                selectedYear = tempSelectedYear;
+                title = "${months[selectedMonthCode]}, ${selectedYear}";
+                //TODO: обновление данных страницы
+              });
+              Navigator.pop(context, 'ОК');
+            },
+            child: Text(
+              'ОК',
+              style: TextStyle(color: Colors.black),
+            ),
+          ),
+        ],
+      );
+    });
   }
 
   SingleChildScrollView buildBodyMainPage() {
@@ -107,9 +224,27 @@ class _MyHomePageState extends State<MyHomePage> {
           direction: Axis.vertical,
           spacing: 10,
           children: [
-            Container(child: Text(Uri.base.path, style: TextStyle(fontSize: 22,),)),
-            Container(child: Text('2', style: TextStyle(fontSize: 22,),)),
-            Container(child: Text('3', style: TextStyle(fontSize: 22,),)),
+            Container(
+                child: Text(
+              Uri.base.path,
+              style: TextStyle(
+                fontSize: 22,
+              ),
+            )),
+            Container(
+                child: Text(
+              '2',
+              style: TextStyle(
+                fontSize: 22,
+              ),
+            )),
+            Container(
+                child: Text(
+              '3',
+              style: TextStyle(
+                fontSize: 22,
+              ),
+            )),
           ],
         ),
       ),
@@ -117,20 +252,61 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget buildBottomNavigationBar() {
-    return BottomNavigationBar(
-      backgroundColor: Color(0xFFD6D6D6),
-      items: [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.insert_chart_outlined, color: Colors.black), label: 'Статистика',
+    return Container(
+      color: Color(0xFFf3edf7),
+      padding: EdgeInsets.only(
+        top: 12,
+        bottom: 16,
+      ),
+      child: BottomNavigationBar(
+        backgroundColor: Color(0xFFf3edf7),
+        selectedFontSize: 16,
+        selectedItemColor: Color(0xFF000000),
+        unselectedFontSize: 16,
+        unselectedItemColor: Color(0xFF000000),
+        selectedLabelStyle: TextStyle(
+          fontStyle: FontStyle.normal,
+          fontFamily: 'Roboto',
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.5,
         ),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.add_box_outlined), label: 'Новое настроение'
+        unselectedLabelStyle: TextStyle(
+          fontStyle: FontStyle.normal,
+          fontFamily: 'Roboto',
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.5,
         ),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.self_improvement_outlined), label: 'Медитация'
-        ),
-      ],
+        elevation: 0,
+        iconSize: 30,
+        items: [
+          BottomNavigationBarItem(
+            icon: Container(
+              margin: EdgeInsets.only(
+                bottom: 4,
+              ),
+              child: Icon(Icons.insert_chart_outlined, color: Colors.black),
+            ),
+            label: 'Статистика',
+          ),
+          BottomNavigationBarItem(
+            icon: Container(
+              margin: EdgeInsets.only(
+                bottom: 4,
+              ),
+              child: Icon(Icons.add_box_outlined),
+            ),
+            label: 'Новое настроение',
+          ),
+          BottomNavigationBarItem(
+            icon: Container(
+                margin: EdgeInsets.only(
+                  bottom: 4,
+                ),
+                child: Icon(Icons.self_improvement_outlined)),
+            label: 'Медитация',
+          ),
+        ],
+      ),
     );
   }
-
 }

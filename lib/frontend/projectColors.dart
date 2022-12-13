@@ -9,17 +9,18 @@ import 'package:flutter/material.dart';
 
 // colors v1
 const firstColor = 0xFFFFFFFF;
+const secondColor = 0xFF000000;
 
 const MaterialColor primarySwatchMaterialColor =
 MaterialColor(firstColor, <int, Color>{
-  50: Color(firstColor),
-  100: Color(firstColor),
-  200: Color(firstColor),
-  300: Color(firstColor),
-  400: Color(firstColor),
-  500: Color(firstColor),
-  600: Color(firstColor),
-  700: Color(firstColor),
-  800: Color(firstColor),
-  900: Color(firstColor),
+  50: Color(secondColor),
+  100: Color(secondColor),
+  200: Color(secondColor),
+  300: Color(secondColor),
+  400: Color(secondColor),
+  500: Color(secondColor),
+  600: Color(secondColor),
+  700: Color(secondColor),
+  800: Color(secondColor),
+  900: Color(secondColor),
 });

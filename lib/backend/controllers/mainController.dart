@@ -21,3 +21,11 @@ String getTitle({int monthCode = 0, int year = 0}) {
   String currentYear = DateTime.now().year.toString();
   return "${months[currentMonthCode]}, ${currentYear}";
 }
+
+List<int> getListOfYear() {
+  List<int> years = [];
+  for(int i = 2000; i <= DateTime.now().year + 5; i++){
+    years.add(i);
+  }
+  return years;
+}
