@@ -39,6 +39,9 @@ abstract class DB {
           is_use BIT NOT NULL DEFAULT 1
         )''');
 
+    // SvgPicture.asset(
+    //   'assets/moods/2.svg',
+    // ),
     await db.execute('''
         CREATE TABLE mood (
           id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -146,10 +149,51 @@ abstract class DB {
         INSERT INTO mood(id, title, path_icon, value) VALUES(5, "Отвратительное", "assets/moods/1.svg", 1)
         ''');
 
-
-
-
     //Пример данных, как может быть заполнен месяц
+
+    await db.execute('''
+        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(1, 1, "2000-12-01", null)
+    ''');
+
+    await db.execute('''
+        INSERT INTO my_mood_event(id_my_mood, id_event) VALUES(1, 1)
+    ''');
+
+
+    await db.execute('''
+        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(2, 5, "2000-12-01", null)
+    ''');
+
+    await db.execute('''
+        INSERT INTO my_mood_event(id_my_mood, id_event) VALUES(2, 1)
+    ''');
+
+
+    await db.execute('''
+        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(3, 1, "2000-12-01", null)
+    ''');
+
+    await db.execute('''
+        INSERT INTO my_mood_event(id_my_mood, id_event) VALUES(3, 3)
+    ''');
+
+
+    await db.execute('''
+        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(4, 1, "2000-12-04", null)
+    ''');
+
+    await db.execute('''
+        INSERT INTO my_mood_event(id_my_mood, id_event) VALUES(4, 2)
+    ''');
+
+
+    await db.execute('''
+        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(5, 1, "2000-12-07", null)
+    ''');
+
+    await db.execute('''
+        INSERT INTO my_mood_event(id_my_mood, id_event) VALUES(5, 4)
+    ''');
 
 
 
