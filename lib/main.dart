@@ -443,6 +443,8 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               SvgPicture.asset(
                 'assets/moods/1.svg',
+                width: 50,
+                height: 50,
               ),
               SvgPicture.asset(
                 'assets/moods/2.svg',
