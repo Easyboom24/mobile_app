@@ -1,4 +1,7 @@
 
+import 'package:mobile_app/backend/models/EventCategoryModel.dart';
+import 'package:mobile_app/backend/services/db.dart';
+
 String getTitle({int monthCode = 0, int year = 0}) {
   var months = {
     1: 'Январь',
@@ -28,4 +31,12 @@ List<int> getListOfYear() {
     years.add(i);
   }
   return years;
+}
+
+void getData() async{
+  var data = DB.query(EventCategoryModel.table);
+  List listData = await data;
+  for (var t in listData){
+    print(t);
+  }
 }

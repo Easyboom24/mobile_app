@@ -1,8 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
+import 'package:badges/badges.dart' as BadgeWidget;
+import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:mobile_app/backend/services/db.dart';
 import 'package:mobile_app/frontend/projectColors.dart';
 import '/backend/controllers/mainController.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -75,6 +79,11 @@ class _MyHomePageState extends State<MyHomePage> {
   int selectedYear = DateTime.now().year;
   int tempSelectedYear = DateTime.now().year;
 
+  //пример как использовать код иконки
+  var movie = IconData(0xf1c2, fontFamily: 'MaterialIcons');
+
+  //
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -91,9 +100,14 @@ class _MyHomePageState extends State<MyHomePage> {
           // the App.build method, and use it to set our appbar title.
           elevation: 0,
           title: buildAppBarTitleMainPage(context),
+          systemOverlayStyle: SystemUiOverlayStyle(
+            systemNavigationBarColor: Color(firstColor),
+            statusBarColor: Color(firstColor),
+          ),
         ),
       ),
-      body: buildBodyMainPage(),
+      backgroundColor: Color(firstColor),
+      body: buildBodyMainPage(context),
       bottomNavigationBar: buildBottomNavigationBar(),
     );
   }
@@ -132,58 +146,85 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  StatefulBuilder buildAlertDialog(BuildContext context) {
-    return StatefulBuilder(builder: (context, _setter){
+  Widget buildAlertDialog(BuildContext context) {
+    return StatefulBuilder(builder: (context, _setter) {
       return AlertDialog(
+        backgroundColor: Color(0xFFFFFBFE),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(28.0),
           ),
         ),
-        title: Text('Выберите месяц и год'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Divider(),
-            Container(
-              child: Row(
-                children: [
-                  DropdownButton(
-                      value: tempSelectedMonthCode,
-                      items: months
-                          .map((monthCode, value) {
-                        return MapEntry(
-                          monthCode,
-                          DropdownMenuItem(
-                            value: monthCode,
-                            child: Text(value),
-                          ),
-                        );
-                      })
-                          .values
-                          .toList(),
-                      onChanged: (value) {
-                        _setter(() {
-                          tempSelectedMonthCode = value!;
-                        });
-                      }),
-                  DropdownButton(
-                      value: tempSelectedYear,
-                      items: years.map((value) {
-                        return DropdownMenuItem(
-                          value: value,
-                          child: Text(value.toString()),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        _setter(() {
-                          tempSelectedYear = value!;
-                        });
-                      }),
-                ],
+        title: Text(
+          'Выберите месяц и год',
+          style: TextStyle(fontSize: 32, fontWeight: FontWeight.w400),
+        ),
+        content: Container(
+          width: 350,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Color(0xFF6750A4),
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(16),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    DropdownButton(
+                        menuMaxHeight: 250,
+                        value: tempSelectedMonthCode,
+                        items: months
+                            .map((monthCode, value) {
+                              return MapEntry(
+                                monthCode,
+                                DropdownMenuItem(
+                                  value: monthCode,
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                              );
+                            })
+                            .values
+                            .toList(),
+                        onChanged: (value) {
+                          _setter(() {
+                            tempSelectedMonthCode = value!;
+                          });
+                        }),
+                    DropdownButton(
+                        menuMaxHeight: 250,
+                        value: tempSelectedYear,
+                        items: years.map((value) {
+                          return DropdownMenuItem(
+                            value: value,
+                            child: Text(
+                              value.toString(),
+                              style: TextStyle(
+                                  fontSize: 14, fontWeight: FontWeight.w500),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          _setter(() {
+                            tempSelectedYear = value!;
+                          });
+                        }),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         actions: <Widget>[
           TextButton(
@@ -192,7 +233,10 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             child: Text(
               'Назад',
-              style: TextStyle(color: Colors.black),
+              style: TextStyle(
+                color: Color(0xFF6750A4),
+                fontSize: 14,
+              ),
             ),
           ),
           TextButton(
@@ -207,7 +251,10 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             child: Text(
               'ОК',
-              style: TextStyle(color: Colors.black),
+              style: TextStyle(
+                color: Color(0xFF6750A4),
+                fontSize: 14,
+              ),
             ),
           ),
         ],
@@ -215,37 +262,202 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  SingleChildScrollView buildBodyMainPage() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Container(
-        margin: EdgeInsets.only(top: 16, bottom: 16),
-        child: Wrap(
-          direction: Axis.vertical,
-          spacing: 10,
-          children: [
-            Container(
-                child: Text(
-              Uri.base.path,
-              style: TextStyle(
-                fontSize: 22,
+  Widget buildBodyMainPage(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Container(
+          margin: EdgeInsets.only(
+            top: 16,
+            bottom: 16,
+            left: 16,
+            right: 16,
+          ),
+          child: Wrap(
+            direction: Axis.vertical,
+            spacing: 10,
+            children: [
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      child: Text(
+                        "Счетчик занятий",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      margin: EdgeInsets.only(
+                        left: 50,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: 16,
+                        bottom: 16,
+                        left: 16,
+                        right: 16,
+                      ),
+                      padding: EdgeInsets.only(
+                        top: 16,
+                        bottom: 16,
+                        left: 10,
+                        right: 10,
+                      ),
+                      width: MediaQuery.of(context).size.width - 64,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          width: 1,
+                          color: Color(0xFFCAC4D0),
+                        ),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(12),
+                        ),
+                        color: Color(0xFFFFFBFE),
+                      ),
+                      child: Wrap(
+                        spacing: 15,
+                        children: [
+                          Column(
+                            children: [
+                              BadgeWidget.Badge(
+                                badgeContent: Text(
+                                  "1",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                badgeColor: Color(0xFFB3261E),
+                                position:
+                                    BadgeWidget.BadgePosition.topEnd(end: -7),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Color(0xFFe9e4e8),
+                                      width: 8,
+                                    ),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(100),
+                                    ),
+                                    color: Color(0xFFe9e4e8),
+                                  ),
+                                  child: Icon(
+                                    movie,
+                                    color: Color(0xFF49454F),
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                'кино',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12,
+                                    letterSpacing: 0.5),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              BadgeWidget.Badge(
+                                badgeContent: Text(
+                                  "1",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                badgeColor: Color(0xFFB3261E),
+                                position:
+                                    BadgeWidget.BadgePosition.topEnd(end: -7),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Color(0xFFe9e4e8),
+                                      width: 8,
+                                    ),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(100),
+                                    ),
+                                    color: Color(0xFFe9e4e8),
+                                  ),
+                                  child: Icon(
+                                    Icons.videogame_asset_outlined,
+                                    color: Color(0xFF49454F),
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                'кино',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12,
+                                    letterSpacing: 0.5),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              BadgeWidget.Badge(
+                                badgeContent: Text(
+                                  "1",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                badgeColor: Color(0xFFB3261E),
+                                position:
+                                    BadgeWidget.BadgePosition.topEnd(end: -7),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Color(0xFFe9e4e8),
+                                      width: 8,
+                                    ),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(100),
+                                    ),
+                                    color: Color(0xFFe9e4e8),
+                                  ),
+                                  child: Icon(
+                                    Icons.movie_creation_outlined,
+                                    color: Color(0xFF49454F),
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                'кино',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12,
+                                    letterSpacing: 0.5),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            )),
-            Container(
-                child: Text(
-              '2',
-              style: TextStyle(
-                fontSize: 22,
+              SvgPicture.asset(
+                'assets/moods/1.svg',
               ),
-            )),
-            Container(
-                child: Text(
-              '3',
-              style: TextStyle(
-                fontSize: 22,
+              SvgPicture.asset(
+                'assets/moods/2.svg',
               ),
-            )),
-          ],
+              SvgPicture.asset(
+                'assets/moods/3.svg',
+              ),
+              SvgPicture.asset(
+                'assets/moods/4.svg',
+              ),
+              SvgPicture.asset(
+                'assets/moods/5.svg',
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -260,9 +472,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       child: BottomNavigationBar(
         backgroundColor: Color(0xFFf3edf7),
-        selectedFontSize: 16,
+        selectedFontSize: 12,
         selectedItemColor: Color(0xFF000000),
-        unselectedFontSize: 16,
+        unselectedFontSize: 12,
         unselectedItemColor: Color(0xFF000000),
         selectedLabelStyle: TextStyle(
           fontStyle: FontStyle.normal,
@@ -278,6 +490,11 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         elevation: 0,
         iconSize: 30,
+        onTap: (int index) {
+          setState(() {
+            getData();
+          });
+        },
         items: [
           BottomNavigationBarItem(
             icon: Container(
