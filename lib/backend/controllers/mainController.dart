@@ -200,5 +200,4 @@ void deleteMyMood(Map my_mood) async {
       date: DateTime.parse(my_mood['date']),
       comment: my_mood['comment']);
   await DB.delete(MyMoodModel.table, myMoodModel);
-  print(my_mood);
 }

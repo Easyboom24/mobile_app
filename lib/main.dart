@@ -284,10 +284,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget buildBodyMainPage(BuildContext context) {
-    print('_________________________________________________________________');
-
-    print(data);
-    print('_________________________________________________________________');
+    // print('_________________________________________________________________');
+    //
+    // print(data);
+    // print('_________________________________________________________________');
     if (data != null) {
       return Container(
         width: MediaQuery.of(context).size.width,
