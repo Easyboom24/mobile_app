@@ -1,5 +1,11 @@
 import 'model.dart';
 
+// await db.execute('''
+//         CREATE TABLE event_category(
+//           id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY NOT NULL,
+//           title STRING NOT NULL
+//         )''');
+
 class EventCategoryModel extends Model {
   static String table = 'event_category';
 

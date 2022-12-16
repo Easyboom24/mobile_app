@@ -75,9 +75,12 @@ class _MyHomePageState extends State<MyHomePage> {
   String title = getTitle();
   List<int> years = getListOfYear();
   int selectedMonthCode = DateTime.now().month;
-  int tempSelectedMonthCode = DateTime.now().month;
   int selectedYear = DateTime.now().year;
+
+  int tempSelectedMonthCode = DateTime.now().month;
   int tempSelectedYear = DateTime.now().year;
+
+  var data = getData();
 
   //пример как использовать код иконки
   var movie = IconData(0xf1c2, fontFamily: 'MaterialIcons');
@@ -101,8 +104,9 @@ class _MyHomePageState extends State<MyHomePage> {
           elevation: 0,
           title: buildAppBarTitleMainPage(context),
           systemOverlayStyle: SystemUiOverlayStyle(
-            systemNavigationBarColor: Color(firstColor),
             statusBarColor: Color(firstColor),
+            statusBarBrightness: Brightness.dark,
+            statusBarIconBrightness: Brightness.dark,
           ),
         ),
       ),
@@ -120,12 +124,12 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () {},
             icon: Icon(
               Icons.notifications_none,
-              size: 30,
+              size: 24,
             )),
         Text(
           title,
           style: TextStyle(
-            fontSize: 25,
+            fontSize: 22,
             letterSpacing: 0.5,
             fontWeight: FontWeight.w500,
           ),
@@ -140,7 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             icon: Icon(
               Icons.calendar_today_outlined,
-              size: 30,
+              size: 24,
             ))
       ],
     );
@@ -328,6 +332,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   "1",
                                   style: TextStyle(
                                     color: Colors.white,
+                                    fontSize: 11,
                                   ),
                                 ),
                                 badgeColor: Color(0xFFB3261E),
@@ -347,6 +352,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   child: Icon(
                                     movie,
                                     color: Color(0xFF49454F),
+                                    size: 22,
                                   ),
                                 ),
                               ),
@@ -366,11 +372,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                   "1",
                                   style: TextStyle(
                                     color: Colors.white,
+                                    fontSize: 11,
                                   ),
                                 ),
                                 badgeColor: Color(0xFFB3261E),
                                 position:
-                                    BadgeWidget.BadgePosition.topEnd(end: -7),
+                                BadgeWidget.BadgePosition.topEnd(end: -7),
                                 child: Container(
                                   decoration: BoxDecoration(
                                     border: Border.all(
@@ -383,8 +390,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                     color: Color(0xFFe9e4e8),
                                   ),
                                   child: Icon(
-                                    Icons.videogame_asset_outlined,
+                                    movie,
                                     color: Color(0xFF49454F),
+                                    size: 22,
                                   ),
                                 ),
                               ),
@@ -404,11 +412,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                   "1",
                                   style: TextStyle(
                                     color: Colors.white,
+                                    fontSize: 11,
                                   ),
                                 ),
                                 badgeColor: Color(0xFFB3261E),
                                 position:
-                                    BadgeWidget.BadgePosition.topEnd(end: -7),
+                                BadgeWidget.BadgePosition.topEnd(end: -7),
                                 child: Container(
                                   decoration: BoxDecoration(
                                     border: Border.all(
@@ -421,8 +430,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                     color: Color(0xFFe9e4e8),
                                   ),
                                   child: Icon(
-                                    Icons.movie_creation_outlined,
+                                    movie,
                                     color: Color(0xFF49454F),
+                                    size: 22,
                                   ),
                                 ),
                               ),
@@ -503,7 +513,11 @@ class _MyHomePageState extends State<MyHomePage> {
               margin: EdgeInsets.only(
                 bottom: 4,
               ),
-              child: Icon(Icons.insert_chart_outlined, color: Colors.black),
+              child: Icon(
+                Icons.insert_chart_outlined,
+                color: Colors.black,
+                size: 24,
+              ),
             ),
             label: 'Статистика',
           ),
@@ -512,7 +526,11 @@ class _MyHomePageState extends State<MyHomePage> {
               margin: EdgeInsets.only(
                 bottom: 4,
               ),
-              child: Icon(Icons.add_box_outlined),
+              child: Icon(
+                Icons.add_box_outlined,
+                color: Colors.black,
+                size: 24,
+              ),
             ),
             label: 'Новое настроение',
           ),
@@ -521,7 +539,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 margin: EdgeInsets.only(
                   bottom: 4,
                 ),
-                child: Icon(Icons.self_improvement_outlined)),
+                child: Icon(
+                  Icons.self_improvement_outlined,
+                  color: Colors.black,
+                  size: 24,
+                )),
             label: 'Медитация',
           ),
         ],
