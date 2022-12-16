@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:mobile_app/backend/services/db.dart';
 import 'package:mobile_app/frontend/projectColors.dart';
+import 'package:sqflite/sqflite.dart';
 import '/backend/controllers/mainController.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -80,7 +81,13 @@ class _MyHomePageState extends State<MyHomePage> {
   int tempSelectedMonthCode = DateTime.now().month;
   int tempSelectedYear = DateTime.now().year;
 
-  var data = getData();
+  var data;
+
+  @override
+  void initState() {
+    super.initState();
+    data = getData(selectedMonthCode, selectedYear);
+  }
 
   //пример как использовать код иконки
   var movie = IconData(0xf1c2, fontFamily: 'MaterialIcons');
@@ -504,7 +511,7 @@ class _MyHomePageState extends State<MyHomePage> {
         iconSize: 30,
         onTap: (int index) {
           setState(() {
-            getData();
+            data = getData(selectedMonthCode, selectedYear);
           });
         },
         items: [

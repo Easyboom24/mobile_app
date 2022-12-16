@@ -1,5 +1,7 @@
-
+import 'package:intl/intl.dart';
 import 'package:mobile_app/backend/models/EventCategoryModel.dart';
+import 'package:mobile_app/backend/models/MyMoodEventModel.dart';
+import 'package:mobile_app/backend/models/MyMoodModel.dart';
 import 'package:mobile_app/backend/services/db.dart';
 
 String getTitle({int monthCode = 0, int year = 0}) {
@@ -33,10 +35,26 @@ List<int> getListOfYear() {
   return years;
 }
 
-void getData() async{
-  var data = DB.query(EventCategoryModel.table);
-  List listData = await data;
-  for (var t in listData){
-    print(t);
+dynamic getData(int monthCode, int year) async{
+  monthCode = 12;
+  year = 2000;
+  var data = {'graph': {}, 'eventsCount': [], 'myMoodList': []};
+
+  var selectedMonthFirstDay = DateFormat('yyyy-MM-dd').format(DateTime(year, monthCode));
+  var selectedMonthLastDay = DateFormat('yyyy-MM-dd').format(DateTime(year, monthCode + 1, 0));
+  print(selectedMonthFirstDay);
+  print(selectedMonthLastDay);
+
+  List myMoodsMaps = await DB.rawQuery("SELECT * FROM ${MyMoodModel.table} WHERE date >= '${selectedMonthFirstDay}' AND date <= '${selectedMonthLastDay}'");
+  List myMoodsModels = [];
+
+  for(var myMood in myMoodsMaps){
+    myMoodsModels.add(MyMoodModel.fromMap(myMood));
   }
+
+  String queryEvents = "";
+
+  Map<String, int> graph = {};
+
+  return 1;
 }

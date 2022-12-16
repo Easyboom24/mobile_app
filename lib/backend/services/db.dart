@@ -4,7 +4,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:flutter_svg/svg.dart';
 
 abstract class DB {
-  static dynamic _db;
+  static Database? _db;
 
   static int get _version => 1;
 
@@ -195,19 +195,25 @@ abstract class DB {
         INSERT INTO my_mood_event(id_my_mood, id_event) VALUES(5, 4)
     ''');
 
-
-
   }
 
-  static Future<List<Map<String, dynamic>>> query(String table) async =>
-      _db.query(table);
+  static Future<List<Map<String, dynamic>>> query(String table) async {
+    return _db!.query(table);
+  }
 
-  static Future<int> insert(String table, Model model) async =>
-      await _db.insert(table, model.toMap());
+  static Future<List<Map<String, dynamic>>> rawQuery(String query) async {
+    return _db!.rawQuery(query);
+  }
 
-  static Future<int> update(String table, Model model) async => await _db
-      .update(table, model.toMap(), where: 'id = ?', whereArgs: [model.id]);
+  static Future<int> insert(String table, Model model) async {
+    return await _db!.insert(table, model.toMap());
+  }
 
-  static Future<int> delete(String table, Model model) async =>
-      await _db.delete(table, where: 'id = ?', whereArgs: [model.id]);
+  static Future<int> update(String table, Model model) async {
+    return await _db!.update(table, model.toMap(), where: 'id = ?', whereArgs: [model.id]);
+  }
+
+  static Future<int> delete(String table, Model model) async {
+    return await _db!.delete(table, where: 'id = ?', whereArgs: [model.id]);
+  }
 }
