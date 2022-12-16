@@ -1,8 +1,11 @@
 import 'package:intl/intl.dart';
 import 'package:mobile_app/backend/models/EventCategoryModel.dart';
+import 'package:mobile_app/backend/models/EventModel.dart';
 import 'package:mobile_app/backend/models/MyMoodEventModel.dart';
 import 'package:mobile_app/backend/models/MyMoodModel.dart';
 import 'package:mobile_app/backend/services/db.dart';
+
+import '../models/MoodModel.dart';
 
 String getTitle({int monthCode = 0, int year = 0}) {
   var months = {
@@ -19,7 +22,7 @@ String getTitle({int monthCode = 0, int year = 0}) {
     11: 'Ноябрь',
     12: 'Декабрь'
   };
-  if(monthCode != 0 || year != 0) {
+  if (monthCode != 0 || year != 0) {
     return "${months[monthCode]}, ${year}";
   }
   var currentMonthCode = DateTime.now().month;
@@ -29,32 +32,137 @@ String getTitle({int monthCode = 0, int year = 0}) {
 
 List<int> getListOfYear() {
   List<int> years = [];
-  for(int i = 2000; i <= DateTime.now().year + 5; i++){
+  for (int i = 2000; i <= DateTime.now().year + 5; i++) {
     years.add(i);
   }
   return years;
 }
 
-dynamic getData(int monthCode, int year) async{
+dynamic getData(int monthCode, int year) async {
   monthCode = 12;
   year = 2000;
-  var data = {'graph': {}, 'eventsCount': [], 'myMoodList': []};
+  Map<String, dynamic> data = {
+    'graph': {
+      'options': {},
+      'data': {},
+    },
+    'eventsCount': {},
+    'myMoodList': []
+  };
 
-  var selectedMonthFirstDay = DateFormat('yyyy-MM-dd').format(DateTime(year, monthCode));
-  var selectedMonthLastDay = DateFormat('yyyy-MM-dd').format(DateTime(year, monthCode + 1, 0));
-  print(selectedMonthFirstDay);
-  print(selectedMonthLastDay);
+  var selectedMonthFirstDay =
+      DateFormat('yyyy-MM-dd').format(DateTime(year, monthCode));
+  var selectedMonthLastDay =
+      DateFormat('yyyy-MM-dd').format(DateTime(year, monthCode + 1, 0));
 
-  List myMoodsMaps = await DB.rawQuery("SELECT * FROM ${MyMoodModel.table} WHERE date >= '${selectedMonthFirstDay}' AND date <= '${selectedMonthLastDay}'");
+  //moods
+  List moodsMaps = await DB.query(MoodModel.table);
+  List moodsModels = [];
+
+  for (var mood in moodsMaps) {
+    moodsModels.add(MoodModel.fromMap(mood));
+  }
+  //moods
+
+  //myMoods
+  List myMoodsMaps = await DB.rawQuery(
+      "SELECT * FROM ${MyMoodModel.table} WHERE date >= '${selectedMonthFirstDay}' AND date <= '${selectedMonthLastDay}'");
   List myMoodsModels = [];
 
-  for(var myMood in myMoodsMaps){
+  String rawQueryMyMoodsEvents =
+      "SELECT * FROM ${MyMoodEventModel.table} WHERE ";
+  String optionWhereMyMoodsEvents = "";
+
+  for (var myMood in myMoodsMaps) {
     myMoodsModels.add(MyMoodModel.fromMap(myMood));
+    optionWhereMyMoodsEvents =
+        optionWhereMyMoodsEvents + "id_my_mood = '${myMood['id']}' OR ";
+  }
+  optionWhereMyMoodsEvents = optionWhereMyMoodsEvents.substring(
+      0, optionWhereMyMoodsEvents.length - 4);
+
+  data['myMoodList'] = myMoodsModels..sort((a, b) => a.date.compareTo(b.date));
+  //myMoods
+
+  //myMoodsEvents
+  List myMoodsEventsMaps =
+      await DB.rawQuery(rawQueryMyMoodsEvents + optionWhereMyMoodsEvents);
+  List myMoodsEventsModels = [];
+
+  String rawQueryEvents = "SELECT * FROM ${EventModel.table} WHERE ";
+  String optionWhereEvents = "";
+
+  for (var myMoodEvent in myMoodsEventsMaps) {
+    myMoodsEventsModels.add(MyMoodEventModel.fromMap(myMoodEvent));
+    optionWhereEvents =
+        optionWhereEvents + "id = '${myMoodEvent['id_event']}' OR ";
+  }
+  optionWhereEvents =
+      optionWhereEvents.substring(0, optionWhereEvents.length - 4);
+  //myMoodsEvents
+
+  //events
+  List eventsMaps = await DB.rawQuery(rawQueryEvents + optionWhereEvents);
+  List eventsModels = [];
+
+  for (var event in eventsMaps) {
+    eventsModels.add(EventModel.fromMap(event));
+  }
+  //events
+
+  Map<dynamic, dynamic> eventsCount = {};
+
+  for (MyMoodEventModel myMoodEvent in myMoodsEventsModels) {
+    for (EventModel event in eventsModels) {
+      if (myMoodEvent.id_event == event.id) {
+        if (eventsCount[event.id] == null) {
+          eventsCount[event.id] = {};
+          eventsCount[event.id]['title'] = event.title;
+          eventsCount[event.id]['path_icon'] = event.path_icon;
+          eventsCount[event.id]['count'] = 1;
+        } else {
+          eventsCount[event.id]['count'] += 1;
+        }
+        break;
+      }
+    }
   }
 
-  String queryEvents = "";
+  data['eventsCount'] = eventsCount.entries.toList()
+    ..sort((b, a) => a.value['count'].compareTo(b.value['count']));
 
-  Map<String, int> graph = {};
+  Map<DateTime, dynamic> graphData = {};
 
-  return 1;
+  for (MyMoodModel myMood in myMoodsModels) {
+    if (graphData[myMood.date] == null) {
+      graphData[myMood.date] = {};
+      graphData[myMood.date]['count'] = 1;
+
+      for (MoodModel mood in moodsModels) {
+        if (myMood.id_mood == mood.id) {
+          graphData[myMood.date]['sumValue'] = mood.value;
+          break;
+        }
+      }
+    } else {
+      graphData[myMood.date]['count'] += 1;
+
+      for (MoodModel mood in moodsModels) {
+        if (myMood.id_mood == mood.id) {
+          graphData[myMood.date]['sumValue'] += mood.value;
+          break;
+        }
+      }
+    }
+  }
+
+  graphData.forEach((key, value) {
+    value['avrgValue'] = value['sumValue'] / value['count'];
+  });
+
+  data['graph'] = {'data': graphData};
+
+  print(data);
+
+  return data;
 }

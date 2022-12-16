@@ -14,7 +14,7 @@ class MyMoodModel extends Model {
 
   int id;
   int id_mood;
-  String date;
+  DateTime date;
   String comment;
 
   MyMoodModel({required this.id, required this.id_mood, required this.date, required this.comment});
@@ -40,7 +40,7 @@ class MyMoodModel extends Model {
     return MyMoodModel(
         id: map['id'],
         id_mood: map['id_mood'],
-        date: map['date'],
+        date: DateTime.parse(map['date']),
         comment: map['comment']
     );
   }
