@@ -1,5 +1,6 @@
 import 'package:badges/badges.dart' as BadgeWidget;
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 import 'package:mobile_app/backend/services/db.dart';
 import 'package:mobile_app/frontend/projectColors.dart';
@@ -83,16 +84,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
   var data;
 
-  @override
-  void initState() {
-    super.initState();
-    data = getData(selectedMonthCode, selectedYear);
-  }
-
   //пример как использовать код иконки
   var movie = IconData(0xf1c2, fontFamily: 'MaterialIcons');
 
   //
+
+  @override
+  void initState() {
+    super.initState();
+    var tempData = getData(selectedMonthCode, selectedYear);
+    tempData.then((s) {
+      data = s;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -256,7 +260,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 selectedMonthCode = tempSelectedMonthCode;
                 selectedYear = tempSelectedYear;
                 title = "${months[selectedMonthCode]}, ${selectedYear}";
-                //TODO: обновление данных страницы
+
+                var tempData = getData(selectedMonthCode, selectedYear);
+                tempData.then((s) {
+                  setState(() {
+                    data = s;
+                  });
+                });
               });
               Navigator.pop(context, 'ОК');
             },
@@ -274,210 +284,265 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget buildBodyMainPage(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Container(
-          margin: EdgeInsets.only(
-            top: 16,
-            bottom: 16,
-            left: 16,
-            right: 16,
+    print('_________________________________________________________________');
+
+    print(data);
+    print('_________________________________________________________________');
+    if (data != null) {
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Container(
+            margin: EdgeInsets.only(
+              top: 16,
+              bottom: 16,
+              left: 16,
+              right: 16,
+            ),
+            child: Wrap(
+              direction: Axis.vertical,
+              spacing: 10,
+              children: [
+                buildGraph(context),
+                buildEventsCount(context),
+                buildMyMoodList(context),
+              ],
+            ),
           ),
-          child: Wrap(
-            direction: Axis.vertical,
-            spacing: 10,
-            children: [
-              Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      child: Text(
-                        "Счетчик занятий",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+        ),
+      );
+    } else {
+      return Center(
+        child: Text(
+          'Нет данных за выбранный месяц',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      );
+    }
+  }
+
+  Widget buildGraph(BuildContext context) {
+    return Container();
+  }
+
+  Widget buildEventsCount(BuildContext context) {
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            child: Text(
+              "Счетчик занятий",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            margin: EdgeInsets.only(
+              left: 50,
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(
+              top: 16,
+              bottom: 16,
+              left: 16,
+              right: 16,
+            ),
+            padding: EdgeInsets.only(
+              top: 16,
+              bottom: 16,
+              left: 10,
+              right: 10,
+            ),
+            width: MediaQuery.of(context).size.width - 64,
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: 1,
+                color: Color(0xFFCAC4D0),
+              ),
+              borderRadius: BorderRadius.all(
+                Radius.circular(12),
+              ),
+              color: Color(0xFFFFFBFE),
+            ),
+            child: Wrap(
+              spacing: 10,
+              children: data['eventsCount']
+                  .map(
+                    (i) => (Column(
+                      children: [
+                        BadgeWidget.Badge(
+                          badgeContent: Text(
+                            "${i.value['count']}",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 11,
+                            ),
+                          ),
+                          badgeColor: Color(0xFFB3261E),
+                          position: BadgeWidget.BadgePosition.topEnd(end: -7),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Color(0xFFe9e4e8),
+                                width: 8,
+                              ),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(100),
+                              ),
+                              color: Color(0xFFe9e4e8),
+                            ),
+                            child: Icon(
+                              IconData(int.parse(i.value['path_icon']),
+                                  fontFamily: 'MaterialIcons'),
+                              color: Color(0xFF49454F),
+                              size: 22,
+                            ),
+                          ),
                         ),
-                      ),
-                      margin: EdgeInsets.only(
-                        left: 50,
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(
-                        top: 16,
-                        bottom: 16,
-                        left: 16,
-                        right: 16,
-                      ),
-                      padding: EdgeInsets.only(
-                        top: 16,
-                        bottom: 16,
-                        left: 10,
-                        right: 10,
-                      ),
-                      width: MediaQuery.of(context).size.width - 64,
+                        Text(
+                          '${i.value['title']}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                              letterSpacing: 0.5),
+                        ),
+                      ],
+                    )),
+                  )
+                  .toList()
+                  .cast<Widget>(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildMyMoodList(BuildContext context) {
+    return Container(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            child: Text(
+              "Дневник напоминаний",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            margin: EdgeInsets.only(
+              left: 50,
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(
+              top: 16,
+              bottom: 16,
+              left: 16,
+              right: 16,
+            ),
+            padding: EdgeInsets.only(
+              top: 16,
+              bottom: 16,
+              left: 10,
+              right: 10,
+            ),
+            child: Wrap(
+              direction: Axis.vertical,
+              spacing: 16,
+              children: data['myMoodList']
+                  .map(
+                    (i) => Container(
+                      width: MediaQuery.of(context).size.width - 128,
+                      height: 90,
+                      alignment: Alignment.center,
                       decoration: BoxDecoration(
                         border: Border.all(
                           width: 1,
                           color: Color(0xFFCAC4D0),
                         ),
                         borderRadius: BorderRadius.all(
-                          Radius.circular(12),
+                          Radius.circular(10.0),
                         ),
-                        color: Color(0xFFFFFBFE),
                       ),
                       child: Wrap(
-                        spacing: 15,
+                        direction: Axis.horizontal,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 16,
                         children: [
-                          Column(
-                            children: [
-                              BadgeWidget.Badge(
-                                badgeContent: Text(
-                                  "1",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 11,
-                                  ),
-                                ),
-                                badgeColor: Color(0xFFB3261E),
-                                position:
-                                    BadgeWidget.BadgePosition.topEnd(end: -7),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Color(0xFFe9e4e8),
-                                      width: 8,
-                                    ),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(100),
-                                    ),
-                                    color: Color(0xFFe9e4e8),
-                                  ),
-                                  child: Icon(
-                                    movie,
-                                    color: Color(0xFF49454F),
-                                    size: 22,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                'кино',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12,
-                                    letterSpacing: 0.5),
-                              ),
-                            ],
+                          SvgPicture.asset(
+                            i['path_icon'],
+                            width: 40,
+                            height: 40,
                           ),
-                          Column(
-                            children: [
-                              BadgeWidget.Badge(
-                                badgeContent: Text(
-                                  "1",
+                          Container(
+                            width: 250,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${i['title']} ${DateFormat('dd.MM.yyyy').format(DateTime.parse(i['date']))}',
                                   style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 11,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                    letterSpacing: 0.5,
+                                  ),
+                                  textAlign: TextAlign.start,
+                                ),
+                                SizedBox(height: 5),
+                                Text(
+                                  '${i['comment'].length > 112 ? i['comment'].substring(0, 112) + '...' : i['comment']}',
+                                  style: TextStyle(
+                                    fontSize: 14,
                                   ),
                                 ),
-                                badgeColor: Color(0xFFB3261E),
-                                position:
-                                BadgeWidget.BadgePosition.topEnd(end: -7),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Color(0xFFe9e4e8),
-                                      width: 8,
-                                    ),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(100),
-                                    ),
-                                    color: Color(0xFFe9e4e8),
-                                  ),
-                                  child: Icon(
-                                    movie,
-                                    color: Color(0xFF49454F),
-                                    size: 22,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                'кино',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12,
-                                    letterSpacing: 0.5),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                          Column(
-                            children: [
-                              BadgeWidget.Badge(
-                                badgeContent: Text(
-                                  "1",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 11,
-                                  ),
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                data['myMoodList'].removeWhere(
+                                    (item) => item['id'] == i['id']);
+                              });
+                              deleteMyMood(i);
+                            },
+                            child: Container(
+                              width: 24,
+                              height: 24,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  width: 1,
+                                  color: Color(0xFFE74C3C),
                                 ),
-                                badgeColor: Color(0xFFB3261E),
-                                position:
-                                BadgeWidget.BadgePosition.topEnd(end: -7),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: Color(0xFFe9e4e8),
-                                      width: 8,
-                                    ),
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(100),
-                                    ),
-                                    color: Color(0xFFe9e4e8),
-                                  ),
-                                  child: Icon(
-                                    movie,
-                                    color: Color(0xFF49454F),
-                                    size: 22,
-                                  ),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(2.0),
                                 ),
                               ),
-                              Text(
-                                'кино',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12,
-                                    letterSpacing: 0.5),
+                              child: Icon(
+                                Icons.delete,
+                                color: Color(0xFFE74C3C),
+                                size: 20,
                               ),
-                            ],
+                            ),
                           ),
                         ],
                       ),
                     ),
-                  ],
-                ),
-              ),
-              SvgPicture.asset(
-                'assets/moods/1.svg',
-                width: 50,
-                height: 50,
-              ),
-              SvgPicture.asset(
-                'assets/moods/2.svg',
-              ),
-              SvgPicture.asset(
-                'assets/moods/3.svg',
-              ),
-              SvgPicture.asset(
-                'assets/moods/4.svg',
-              ),
-              SvgPicture.asset(
-                'assets/moods/5.svg',
-              ),
-            ],
+                  )
+                  .toList()
+                  .cast<Widget>(),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -510,9 +575,7 @@ class _MyHomePageState extends State<MyHomePage> {
         elevation: 0,
         iconSize: 30,
         onTap: (int index) {
-          setState(() {
-            data = getData(selectedMonthCode, selectedYear);
-          });
+          setState(() {});
         },
         items: [
           BottomNavigationBarItem(

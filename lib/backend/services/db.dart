@@ -152,7 +152,7 @@ abstract class DB {
     //Пример данных, как может быть заполнен месяц
 
     await db.execute('''
-        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(1, 1, "2000-12-01", null)
+        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(1, 1, "2000-12-01", 'Сегодня у меня непонятное настроение, я проснулся и я заснул обратно.')
     ''');
 
     await db.execute('''
@@ -161,7 +161,7 @@ abstract class DB {
 
 
     await db.execute('''
-        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(2, 5, "2000-12-01", null)
+        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(2, 5, "2000-12-01", 'Сегодня у меня непонятное настроение, я проснулся и я заснул обратно.')
     ''');
 
     await db.execute('''
@@ -170,7 +170,7 @@ abstract class DB {
 
 
     await db.execute('''
-        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(3, 1, "2000-12-01", null)
+        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(3, 1, "2000-12-01", 'Сегодня у меня непонятное настроение, я проснулся и я заснул обратно.')
     ''');
 
     await db.execute('''
@@ -179,7 +179,7 @@ abstract class DB {
 
 
     await db.execute('''
-        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(4, 1, "2000-12-04", null)
+        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(4, 1, "2000-12-04", 'Сегодня у меня непонятное настроение, я проснулся и я заснул обратно.')
     ''');
 
     await db.execute('''
@@ -188,7 +188,7 @@ abstract class DB {
 
 
     await db.execute('''
-        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(5, 1, "2000-12-07", null)
+        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(5, 1, "2000-12-07", 'Сегодня у меня непонятное настроение, я проснулся и я заснул обратно.')
     ''');
 
     await db.execute('''

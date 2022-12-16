@@ -4,6 +4,7 @@ import 'package:mobile_app/backend/models/EventModel.dart';
 import 'package:mobile_app/backend/models/MyMoodEventModel.dart';
 import 'package:mobile_app/backend/models/MyMoodModel.dart';
 import 'package:mobile_app/backend/services/db.dart';
+import 'package:mobile_app/backend/models/model.dart';
 
 import '../models/MoodModel.dart';
 
@@ -39,8 +40,11 @@ List<int> getListOfYear() {
 }
 
 dynamic getData(int monthCode, int year) async {
+  //TODO: Временные данные
   monthCode = 12;
   year = 2000;
+  //
+
   Map<String, dynamic> data = {
     'graph': {
       'options': {},
@@ -55,19 +59,14 @@ dynamic getData(int monthCode, int year) async {
   var selectedMonthLastDay =
       DateFormat('yyyy-MM-dd').format(DateTime(year, monthCode + 1, 0));
 
-  //moods
-  List moodsMaps = await DB.query(MoodModel.table);
-  List moodsModels = [];
-
-  for (var mood in moodsMaps) {
-    moodsModels.add(MoodModel.fromMap(mood));
-  }
-  //moods
-
   //myMoods
   List myMoodsMaps = await DB.rawQuery(
       "SELECT * FROM ${MyMoodModel.table} WHERE date >= '${selectedMonthFirstDay}' AND date <= '${selectedMonthLastDay}'");
   List myMoodsModels = [];
+
+  if (myMoodsMaps.isEmpty) {
+    return null;
+  }
 
   String rawQueryMyMoodsEvents =
       "SELECT * FROM ${MyMoodEventModel.table} WHERE ";
@@ -80,9 +79,16 @@ dynamic getData(int monthCode, int year) async {
   }
   optionWhereMyMoodsEvents = optionWhereMyMoodsEvents.substring(
       0, optionWhereMyMoodsEvents.length - 4);
-
-  data['myMoodList'] = myMoodsModels..sort((a, b) => a.date.compareTo(b.date));
   //myMoods
+
+  //moods
+  List moodsMaps = await DB.query(MoodModel.table);
+  List moodsModels = [];
+
+  for (var mood in moodsMaps) {
+    moodsModels.add(MoodModel.fromMap(mood));
+  }
+  //moods
 
   //myMoodsEvents
   List myMoodsEventsMaps =
@@ -110,6 +116,7 @@ dynamic getData(int monthCode, int year) async {
   }
   //events
 
+  //Заполнение data
   Map<dynamic, dynamic> eventsCount = {};
 
   for (MyMoodEventModel myMoodEvent in myMoodsEventsModels) {
@@ -160,9 +167,38 @@ dynamic getData(int monthCode, int year) async {
     value['avrgValue'] = value['sumValue'] / value['count'];
   });
 
-  data['graph'] = {'data': graphData};
+  List myMoodListOut = [];
 
-  print(data);
+  for (var myMood in myMoodsMaps) {
+    myMoodListOut.add({});
+    myMoodListOut[myMoodListOut.length - 1]['id'] = myMood['id'];
+    myMoodListOut[myMoodListOut.length - 1]['id_mood'] = myMood['id_mood'];
+    myMoodListOut[myMoodListOut.length - 1]['date'] = myMood['date'];
+    myMoodListOut[myMoodListOut.length - 1]['comment'] = myMood['comment'];
+    for (MoodModel mood in moodsModels) {
+      if (myMood['id_mood'] == mood.id) {
+        myMoodListOut[myMoodListOut.length - 1]['title'] = mood.title;
+        myMoodListOut[myMoodListOut.length - 1]['path_icon'] = mood.path_icon;
+        break;
+      }
+    }
+  }
+
+  data['myMoodList'] = myMoodListOut
+    ..sort((a, b) => a['date'].compareTo(b['date']));
+
+  data['graph'] = {'data': graphData};
+  //Заполнение data
 
   return data;
+}
+
+void deleteMyMood(Map my_mood) async {
+  MyMoodModel myMoodModel = MyMoodModel(
+      id: my_mood['id'],
+      id_mood: my_mood['id_mood'],
+      date: DateTime.parse(my_mood['date']),
+      comment: my_mood['comment']);
+  await DB.delete(MyMoodModel.table, myMoodModel);
+  print(my_mood);
 }
