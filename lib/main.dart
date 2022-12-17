@@ -98,6 +98,15 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void refreshData() {
+    setState(() {
+      var tempData = getData(selectedMonthCode, selectedYear);
+      tempData.then((s) {
+        data = s;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -509,11 +518,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                           InkWell(
                             onTap: () {
-                              setState(() {
-                                data['myMoodList'].removeWhere(
-                                    (item) => item['id'] == i['id']);
-                              });
                               deleteMyMood(i);
+                              refreshData();
                             },
                             child: Container(
                               width: 24,
