@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import 'package:mobile_app/backend/services/db.dart';
 import 'package:mobile_app/frontend/projectColors.dart';
+import 'package:mobile_app/frontend/screens/newMyMood.dart';
 import 'package:sqflite/sqflite.dart';
 import '/backend/controllers/mainController.dart';
 import 'package:flutter/material.dart';
@@ -84,11 +85,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   var data;
 
-  //пример как использовать код иконки
-  var movie = IconData(0xf1c2, fontFamily: 'MaterialIcons');
-
-  //
-
   @override
   void initState() {
     super.initState();
@@ -117,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(64),
+        preferredSize: Size.fromHeight(50),
         child: AppBar(
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
@@ -312,6 +308,8 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Wrap(
               direction: Axis.vertical,
               spacing: 10,
+              // Весь контент экрана по центру
+              runAlignment: WrapAlignment.center,
               children: [
                 buildGraph(context),
                 buildEventsCount(context),
@@ -369,7 +367,7 @@ class _MyHomePageState extends State<MyHomePage> {
               left: 10,
               right: 10,
             ),
-            width: MediaQuery.of(context).size.width - 64,
+            width: 350,
             decoration: BoxDecoration(
               border: Border.all(
                 width: 1,
@@ -582,7 +580,11 @@ class _MyHomePageState extends State<MyHomePage> {
         elevation: 0,
         iconSize: 30,
         onTap: (int index) {
-          setState(() {});
+          setState(() {
+            if(index == 1){
+              Navigator.push(context, MaterialPageRoute(builder: (context) => MyMyMood()));
+            }
+          });
         },
         items: [
           BottomNavigationBarItem(
