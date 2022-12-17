@@ -470,7 +470,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: data['myMoodList']
                   .map(
                     (i) => Container(
-                      width: MediaQuery.of(context).size.width - 128,
+                      width: 350,
                       height: 90,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
@@ -508,7 +508,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                                 SizedBox(height: 5),
                                 Text(
-                                  '${i['comment'].length > 112 ? i['comment'].substring(0, 112) + '...' : i['comment']}',
+                                  '${i['comment'].length > 51 ? i['comment'].substring(0, 51) + '...' : i['comment']}',
                                   style: TextStyle(
                                     fontSize: 14,
                                   ),
