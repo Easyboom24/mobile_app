@@ -473,6 +473,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       width: 350,
                       height: 90,
                       alignment: Alignment.center,
+                      padding: EdgeInsets.only(left: 10, right: 10),
                       decoration: BoxDecoration(
                         border: Border.all(
                           width: 1,
@@ -485,7 +486,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Wrap(
                         direction: Axis.horizontal,
                         crossAxisAlignment: WrapCrossAlignment.center,
-                        spacing: 16,
+                        spacing: 10,
                         children: [
                           SvgPicture.asset(
                             i['path_icon'],
@@ -493,7 +494,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             height: 40,
                           ),
                           Container(
-                            width: 250,
+                            width: 190,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
