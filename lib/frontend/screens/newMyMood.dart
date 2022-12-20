@@ -1,17 +1,21 @@
 import 'package:badges/badges.dart' as BadgeWidget;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:mobile_app/backend/controllers/newMyMoodController.dart';
 
 import 'package:mobile_app/backend/services/db.dart';
 import 'package:mobile_app/frontend/projectColors.dart';
 import 'package:sqflite/sqflite.dart';
+import '../../main.dart';
 import '/backend/controllers/mainController.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 
 class MyMyMood extends StatelessWidget {
-  const MyMyMood({super.key});
+  int id_my_mood;
+
+  MyMyMood(int this.id_my_mood, {super.key});
 
   // This widget is the root of your application.
   @override
@@ -30,13 +34,15 @@ class MyMyMood extends StatelessWidget {
         // is not restarted.
         primarySwatch: primarySwatchMaterialColor,
       ),
-      home: const MyMyMoodPage(),
+      home: MyMyMoodPage(id_my_mood),
     );
   }
 }
 
 class MyMyMoodPage extends StatefulWidget {
-  const MyMyMoodPage({super.key});
+  int id_my_mood;
+
+  MyMyMoodPage(int this.id_my_mood, {super.key});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -48,15 +54,28 @@ class MyMyMoodPage extends StatefulWidget {
   // always marked "final".
 
   @override
-  State<MyMyMoodPage> createState() => _MyMyMoodPageState();
+  State<MyMyMoodPage> createState() => _MyMyMoodPageState(id_my_mood);
 }
 
 class _MyMyMoodPageState extends State<MyMyMoodPage> {
+  int id_my_mood;
+
+  _MyMyMoodPageState(int this.id_my_mood);
+
+  String new_title = 'Новое настроение';
+  String old_title = 'Настроение';
+  TextEditingController textFieldDate = TextEditingController();
+
   var data;
 
   @override
   void initState() {
     super.initState();
+    setState(() {
+      data = getMyMoodData(id_my_mood);
+    });
+
+    // dateinput.text = "${DateFormat('dd.MM.yyyy').format(DateTime.now())}";
   }
 
   @override
@@ -92,13 +111,15 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context, rootNavigator: true).pop();
+            },
             icon: Icon(
-              Icons.notifications_none,
+              Icons.arrow_back,
               size: 24,
             )),
         Text(
-          'Заголовок',
+          '${id_my_mood > 0 ? old_title : new_title}',
           style: TextStyle(
             fontSize: 22,
             letterSpacing: 0.5,
@@ -106,16 +127,55 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
           ),
         ),
         IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.calendar_today_outlined,
-              size: 24,
-            ))
+          onPressed: () {},
+          icon: Icon(
+            Icons.calendar_today_outlined,
+            size: 24,
+          ),
+          color: Color(0x00000000),
+        )
       ],
     );
   }
 
   Widget buildBodyMainPage(BuildContext context) {
-    return Text('data');
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Container(
+          margin: EdgeInsets.only(
+            top: 16,
+            bottom: 16,
+            left: 16,
+            right: 16,
+          ),
+          child: Wrap(
+            direction: Axis.vertical,
+            spacing: 10,
+            // Весь контент экрана по центру
+            runAlignment: WrapAlignment.center,
+            children: [
+              Container(
+                width: 350,
+                child: TextField(
+                  decoration: const InputDecoration(
+                    labelText: 'Введите дату',
+                    labelStyle: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ),
+                  controller: textFieldDate,
+                  onTap: () {
+                    textFieldDate.text = '123';
+                    setState(() {});
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

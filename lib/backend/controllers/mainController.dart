@@ -40,7 +40,7 @@ List<int> getListOfYear() {
   return years;
 }
 
-dynamic getData(int monthCode, int year) async {
+dynamic getMainData(int monthCode, int year) async {
   //TODO: Временные данные
   // monthCode = 12;
   // year = 2000;

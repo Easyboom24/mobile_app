@@ -89,15 +89,17 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    var tempData = getData(selectedMonthCode, selectedYear);
-    tempData.then((s) {
-      data = s;
+    var tempData = getMainData(selectedMonthCode, selectedYear);
+    setState(() {
+      tempData.then((s) {
+        data = s;
+      });
     });
   }
 
   void refreshData() {
     setState(() {
-      var tempData = getData(selectedMonthCode, selectedYear);
+      var tempData = getMainData(selectedMonthCode, selectedYear);
       tempData.then((s) {
         data = s;
       });
@@ -267,7 +269,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 selectedYear = tempSelectedYear;
                 title = "${months[selectedMonthCode]}, ${selectedYear}";
 
-                var tempData = getData(selectedMonthCode, selectedYear);
+                var tempData = getMainData(selectedMonthCode, selectedYear);
                 tempData.then((s) {
                   setState(() {
                     data = s;
@@ -485,79 +487,85 @@ class _MyHomePageState extends State<MyHomePage> {
               spacing: 16,
               children: data['myMoodList']
                   .map(
-                    (i) => Container(
-                      width: 350,
-                      height: 90,
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.only(left: 10, right: 10),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          width: 1,
-                          color: Color(0xFFCAC4D0),
-                        ),
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(10.0),
-                        ),
-                      ),
-                      child: Wrap(
-                        direction: Axis.horizontal,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        spacing: 10,
-                        children: [
-                          SvgPicture.asset(
-                            i['path_icon'],
-                            width: 40,
-                            height: 40,
+                    (i) => InkWell(
+                      onLongPress: (){
+                        Navigator.push(
+                            context, MaterialPageRoute(builder: (context) => MyMyMood(i['id'])));
+                      },
+                      child: Container(
+                        width: 350,
+                        height: 90,
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.only(left: 10, right: 10),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            width: 1,
+                            color: Color(0xFFCAC4D0),
                           ),
-                          Container(
-                            width: 190,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '${i['title']} ${DateFormat('dd.MM.yyyy').format(DateTime.parse(i['date']))}',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w400,
-                                    letterSpacing: 0.5,
-                                  ),
-                                  textAlign: TextAlign.start,
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  '${i['comment'].length > 51 ? i['comment'].substring(0, 51) + '...' : i['comment']}',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10.0),
+                          ),
+                        ),
+                        child: Wrap(
+                          direction: Axis.horizontal,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 10,
+                          children: [
+                            SvgPicture.asset(
+                              i['path_icon'],
+                              width: 40,
+                              height: 40,
                             ),
-                          ),
-                          InkWell(
-                            onTap: () {
-                              deleteMyMood(i);
-                              refreshData();
-                            },
-                            child: Container(
-                              width: 24,
-                              height: 24,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  width: 1,
+                            Container(
+                              width: 190,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '${i['title']} ${DateFormat('dd.MM.yyyy').format(DateTime.parse(i['date']))}',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                      letterSpacing: 0.5,
+                                    ),
+                                    textAlign: TextAlign.start,
+                                  ),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    '${i['comment'].length > 51 ? i['comment'].substring(0, 51) + '...' : i['comment']}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                deleteMyMood(i);
+                                refreshData();
+                              },
+                              child: Container(
+                                width: 24,
+                                height: 24,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    width: 1,
+                                    color: Color(0xFFE74C3C),
+                                  ),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(2.0),
+                                  ),
+                                ),
+                                child: Icon(
+                                  Icons.delete,
                                   color: Color(0xFFE74C3C),
+                                  size: 20,
                                 ),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(2.0),
-                                ),
-                              ),
-                              child: Icon(
-                                Icons.delete,
-                                color: Color(0xFFE74C3C),
-                                size: 20,
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   )
@@ -601,7 +609,7 @@ class _MyHomePageState extends State<MyHomePage> {
           setState(() {
             if (index == 1) {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => MyMyMood()));
+                  context, MaterialPageRoute(builder: (context) => MyMyMood(-1)));
             }
           });
         },

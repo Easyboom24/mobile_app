@@ -32,10 +32,10 @@ dependencies:
   flutter:
     sdk: flutter
   sqflite: ^1.2.0
-  path_provider: ^1.6.0
+  path_provider: ^2.0.11
   badges: ^2.0.2
   flutter_svg: ^1.1.6
-  intl: ^0.18.0
+  intl: ^0.17.0
   graphic: ^1.0.1
 
 
