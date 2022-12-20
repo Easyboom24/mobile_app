@@ -5,6 +5,7 @@ import 'package:mobile_app/backend/models/MyMoodEventModel.dart';
 import 'package:mobile_app/backend/models/MyMoodModel.dart';
 import 'package:mobile_app/backend/services/db.dart';
 import 'package:mobile_app/backend/models/model.dart';
+import 'package:graphic/graphic.dart';
 
 import '../models/MoodModel.dart';
 
@@ -41,15 +42,12 @@ List<int> getListOfYear() {
 
 dynamic getData(int monthCode, int year) async {
   //TODO: Временные данные
-  monthCode = 12;
-  year = 2000;
+  // monthCode = 12;
+  // year = 2000;
   //
 
   Map<String, dynamic> data = {
-    'graph': {
-      'options': {},
-      'data': {},
-    },
+    'graphData': [],
     'eventsCount': {},
     'myMoodList': []
   };
@@ -143,6 +141,7 @@ dynamic getData(int monthCode, int year) async {
   for (MyMoodModel myMood in myMoodsModels) {
     if (graphData[myMood.date] == null) {
       graphData[myMood.date] = {};
+      graphData[myMood.date]['date'] = myMood.date;
       graphData[myMood.date]['count'] = 1;
 
       for (MoodModel mood in moodsModels) {
@@ -187,7 +186,7 @@ dynamic getData(int monthCode, int year) async {
   data['myMoodList'] = myMoodListOut
     ..sort((a, b) => a['date'].compareTo(b['date']));
 
-  data['graph'] = {'data': graphData};
+  data['graphData'] = graphData.values.toList();
   //Заполнение data
 
   return data;

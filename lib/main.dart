@@ -1,6 +1,7 @@
 import 'package:badges/badges.dart' as BadgeWidget;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:graphic/graphic.dart';
 
 import 'package:mobile_app/backend/services/db.dart';
 import 'package:mobile_app/frontend/projectColors.dart';
@@ -334,7 +335,24 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget buildGraph(BuildContext context) {
+    // print(data);
     return Container();
+    // return Container(
+    //   child: Chart(
+    //     data: data['graphData'].cast(List<Map<String, dynamic>>),
+    //     variables: {
+    //       'argValue': Variable(
+    //         accessor: (Map map) =>
+    //             map['avrgValue'] as num,
+    //       ),
+    //     },
+    //     elements: [IntervalElement()],
+    //     axes: [
+    //       Defaults.horizontalAxis,
+    //       Defaults.verticalAxis,
+    //     ],
+    //   ),
+    // );
   }
 
   Widget buildEventsCount(BuildContext context) {
@@ -581,8 +599,9 @@ class _MyHomePageState extends State<MyHomePage> {
         iconSize: 30,
         onTap: (int index) {
           setState(() {
-            if(index == 1){
-              Navigator.push(context, MaterialPageRoute(builder: (context) => MyMyMood()));
+            if (index == 1) {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => MyMyMood()));
             }
           });
         },
