@@ -1,6 +1,7 @@
 import 'package:badges/badges.dart' as BadgeWidget;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
+import 'package:material_color_generator/material_color_generator.dart';
 import 'package:mobile_app/backend/controllers/newMyMoodController.dart';
 
 import 'package:mobile_app/backend/services/db.dart';
@@ -32,7 +33,7 @@ class MyMyMood extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: primarySwatchMaterialColor,
+        primarySwatch: generateMaterialColor(color: Color(0xFFFFFFFF)),
       ),
       home: MyMyMoodPage(id_my_mood),
     );
@@ -65,6 +66,8 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
   String new_title = 'Новое настроение';
   String old_title = 'Настроение';
   TextEditingController textFieldDate = TextEditingController();
+
+  bool dateError = false;
 
   var data;
 
@@ -140,7 +143,10 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
 
   Widget buildBodyMainPage(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Container(
@@ -165,13 +171,35 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
                       color: Colors.black,
                     ),
                   ),
+                  cursorColor: Colors.black,
                   controller: textFieldDate,
-                  onTap: () {
-                    textFieldDate.text = '123';
-                    setState(() {});
+                  onChanged: (String value) {
+                    RegExp exp = RegExp(r'^[0-9]{2}\.[0-9]{2}\.[0-9]{4}$');
+
+                    if (value.length != 10 || !exp.hasMatch(value)) {
+                      setState(() {
+                        dateError = true;
+                      });
+                    } else{
+                      setState(() {
+                        dateError = false;
+                      });
+                      DateFormat format = DateFormat("dd.MM.yyyy");
+                      DateTime currentDate = DateTime.now();
+
+                      try{
+                        currentDate = format.parseStrict(value);
+                      }
+                      catch(e){
+                        dateError = true;
+                      }
+                    }
+
+                    print(exp.hasMatch(value));
                   },
                 ),
               ),
+              Text(dateError.toString()),
             ],
           ),
         ),

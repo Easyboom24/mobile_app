@@ -2,6 +2,7 @@ import 'package:badges/badges.dart' as BadgeWidget;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:graphic/graphic.dart';
+import 'package:material_color_generator/material_color_generator.dart';
 
 import 'package:mobile_app/backend/services/db.dart';
 import 'package:mobile_app/frontend/projectColors.dart';
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: primarySwatchMaterialColor,
+        primarySwatch: generateMaterialColor(color: Color(0xFFFFFFFF)),
       ),
       home: const MyHomePage(),
     );
