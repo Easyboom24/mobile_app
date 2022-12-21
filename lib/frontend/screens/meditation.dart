@@ -66,7 +66,65 @@ class _MeditationPageState extends State<MeditationPage> {
   }
 
   buildBodyMainPage(BuildContext context) {
-    return Text("Hello");
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Container(
+          margin: EdgeInsets.only(
+            top: 16,
+            bottom: 16,
+            left: 16,
+            right: 16,
+          ),
+          child: Wrap(
+            direction: Axis.vertical,
+            spacing: 14,
+            runAlignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Container(
+                width: 260,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    width: 1,
+                    color: Color(0xFFFFFBFE),
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(28),
+                  ),
+                  color: Color(0xFFeee8f4),
+                ),
+                padding: EdgeInsets.only(
+                  top: 24,
+                  bottom: 24,
+                  left: 24,
+                  right: 24,
+                ),
+                child: Container(
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.start,
+                    direction: Axis.vertical,
+                    spacing: 20,
+                    children: [
+                      Text(
+                        "Выберите продолжительность",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF49454F),
+                          letterSpacing: 0.5,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget buildBottomNavigationBar() {
