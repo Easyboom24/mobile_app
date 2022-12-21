@@ -43,8 +43,7 @@ class _MeditationPageState extends State<MeditationPage> {
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(50),
         child: AppBar(
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
+          centerTitle: true,
           elevation: 0,
           title: buildAppBarTitleMaditationPage(context),
           systemOverlayStyle: SystemUiOverlayStyle(
@@ -61,34 +60,13 @@ class _MeditationPageState extends State<MeditationPage> {
   }
 
   buildAppBarTitleMaditationPage(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        IconButton(
-            onPressed: () {
-              Navigator.of(context, rootNavigator: true).pop();
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              size: 24,
-            )),
-        Text(
-          'Медитация',
-          style: TextStyle(
-            fontSize: 22,
-            letterSpacing: 0.5,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        IconButton(
-          onPressed: () {},
-          icon: Icon(
-            Icons.calendar_today_outlined,
-            size: 24,
-          ),
-          color: Color(0x00000000),
-        )
-      ],
+    return Text(
+      'Медитация',
+      style: TextStyle(
+        fontSize: 22,
+        letterSpacing: 0.5,
+        fontWeight: FontWeight.w500,
+      ),
     );
   }
 
