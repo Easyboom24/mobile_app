@@ -7,6 +7,7 @@ import 'package:material_color_generator/material_color_generator.dart';
 import 'package:mobile_app/backend/services/db.dart';
 import 'package:mobile_app/frontend/projectColors.dart';
 import 'package:mobile_app/frontend/screens/newMyMood.dart';
+import 'package:mobile_app/frontend/screens/reminder.dart';
 import 'package:sqflite/sqflite.dart';
 import '/backend/controllers/mainController.dart';
 import 'package:flutter/material.dart';
@@ -141,7 +142,10 @@ class _MyHomePageState extends State<MyHomePage> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Reminder()));
+            },
             icon: Icon(
               Icons.notifications_none,
               size: 24,
