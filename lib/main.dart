@@ -92,17 +92,17 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     var tempData = getMainData(selectedMonthCode, selectedYear);
-    setState(() {
-      tempData.then((s) {
+    tempData.then((s) {
+      setState(() {
         data = s;
       });
     });
   }
 
   void refreshData() {
-    setState(() {
-      var tempData = getMainData(selectedMonthCode, selectedYear);
-      tempData.then((s) {
+    var tempData = getMainData(selectedMonthCode, selectedYear);
+    tempData.then((s) {
+      setState(() {
         data = s;
       });
     });
@@ -493,9 +493,11 @@ class _MyHomePageState extends State<MyHomePage> {
               children: data['myMoodList']
                   .map(
                     (i) => InkWell(
-                      onLongPress: (){
+                      onLongPress: () {
                         Navigator.push(
-                            context, MaterialPageRoute(builder: (context) => MyMyMood(i['id'])));
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MyMyMood(i['id'])));
                       },
                       child: Container(
                         width: 350,
@@ -613,8 +615,8 @@ class _MyHomePageState extends State<MyHomePage> {
         onTap: (int index) {
           setState(() {
             if (index == 1) {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => MyMyMood(-1)));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => MyMyMood(-1)));
             }
           });
         },

@@ -85,11 +85,12 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      data = getMyMoodData(id_my_mood);
+    Future<Map<String, dynamic>> tempData = getMyMoodData(id_my_mood);
+    tempData.then((s) {
+      setState(() {
+        data = s;
+      });
     });
-
-    // dateinput.text = "${DateFormat('dd.MM.yyyy').format(DateTime.now())}";
   }
 
   @override
@@ -160,283 +161,337 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
   }
 
   Widget buildBodyMainPage(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Container(
-          margin: EdgeInsets.only(
-            top: 16,
-            bottom: 16,
-            left: 16,
-            right: 16,
-          ),
-          child: Wrap(
-            direction: Axis.vertical,
-            spacing: 14,
-            // Весь контент экрана по центру
-            runAlignment: WrapAlignment.center,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              Container(
-                width: 350,
-                child: TextField(
-                  inputFormatters: [
-                    LengthLimitingTextInputFormatter(10),
-                  ],
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: 'Дата',
-                    labelStyle: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                    ),
-                    floatingLabelStyle: TextStyle(
-                      color: dateError ? Colors.red : Color(0xFFFFBB12),
-                    ),
-                    helperText: "DD.MM.YYYY",
-                    helperStyle: TextStyle(
-                      color: Colors.black,
-                      fontSize: 12,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: dateError ? Colors.red : Color(0xFFFFBB12),
-                        width: 2,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xFFFFBB12),
-                        width: 2,
-                      ),
-                    ),
-                    counterText: dateError ? "Некорректная дата" : "",
-                    counterStyle: TextStyle(
-                      color: Colors.red,
-                      fontSize: 12,
-                    ),
-                  ),
-                  cursorColor: Color(0xFFFFBB12),
-                  onSubmitted: (String value) {
-                    RegExp exp = RegExp(r'^[0-9]{2}\.[0-9]{2}\.[0-9]{4}$');
-
-                    if (value.length != 10 || !exp.hasMatch(value)) {
-                      dateError = true;
-                      currentDate = null;
-                    } else {
-                      dateError = false;
-
-                      DateFormat format = DateFormat("dd.MM.yyyy");
-
-                      try {
-                        currentDate = format.parseStrict(value);
-                      } catch (e) {
-                        dateError = true;
-                        currentDate = null;
-                      }
-                    }
-
-                    setState(() {});
-                  },
-                ),
-              ),
-              Container(
-                width: 260,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 1,
-                    color: Color(0xFFFFFBFE),
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(28),
-                  ),
-                  color: Color(0xFFeee8f4),
-                ),
-                padding: EdgeInsets.only(
-                  top: 24,
-                  bottom: 24,
-                  left: 24,
-                  right: 24,
-                ),
-                child: Container(
-                  child: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.start,
-                    direction: Axis.vertical,
-                    spacing: 20,
-                    children: [
-                      Text(
-                        "Выберите время настроения",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF49454F),
-                          letterSpacing: 0.5,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Wrap(
-                        spacing: 7,
-                        direction: Axis.horizontal,
-                        children: [
-                          Container(
-                            width: 95,
-                            height: 95,
-                            child: TextField(
-                              inputFormatters: [
-                                LengthLimitingTextInputFormatter(2),
-                              ],
-                              textAlignVertical: TextAlignVertical.center,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 57,
-                                color: Color(0xFF1C1B1F),
-                              ),
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.only(
-                                  bottom: 1,
-                                  top: 1,
-                                ),
-                                filled: true,
-                                fillColor: hourFocus.hasFocus
-                                    ? Color(0xFFFFECBD)
-                                    : Color(0xFFE7E0EC),
-                                floatingLabelStyle: TextStyle(
-                                  color: hourFocus.hasFocus
-                                      ? Colors.red
-                                      : Color(0xFFFFBB12),
-                                ),
-                                helperText: "Часы",
-                                helperStyle: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 12,
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: hourError
-                                        ? Colors.red
-                                        : Color(0xFFE7E0EC),
-                                    width: 2,
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0xFFFFBB12),
-                                    width: 2,
-                                  ),
-                                ),
-                              ),
-                              cursorColor: Color(0xFFFFBB12),
-                              focusNode: hourFocus,
-                              onTap: () {
-                                hourFocus.requestFocus();
-                                setState(() {});
-                              },
-                              onSubmitted: (String value) {
-                                try {
-                                  int currentValue = int.parse(value);
-                                  if (currentValue >= 0 && currentValue <= 23) {
-                                    hourError = false;
-                                    hourValue = value;
-                                  } else {
-                                    throw Error();
-                                  }
-                                } catch (e) {
-                                  hourError = true;
-                                  hourValue = null;
-                                }
-                                setState(() {});
-                              },
-                            ),
-                          ),
-                          Text(
-                            ":",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 57,
-                            ),
-                          ),
-                          Container(
-                            width: 95,
-                            height: 95,
-                            child: TextField(
-                              inputFormatters: [
-                                LengthLimitingTextInputFormatter(2),
-                              ],
-                              textAlignVertical: TextAlignVertical.center,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 57,
-                                color: Color(0xFF1C1B1F),
-                              ),
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.only(
-                                  bottom: 1,
-                                  top: 1,
-                                ),
-                                filled: true,
-                                fillColor: minuteFocus.hasFocus
-                                    ? Color(0xFFFFECBD)
-                                    : Color(0xFFE7E0EC),
-                                floatingLabelStyle: TextStyle(
-                                  color: minuteFocus.hasFocus
-                                      ? Colors.red
-                                      : Color(0xFFFFBB12),
-                                ),
-                                helperText: "Минуты",
-                                helperStyle: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 12,
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: minuteError
-                                        ? Colors.red
-                                        : Color(0xFFE7E0EC),
-                                    width: 2,
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Color(0xFFFFBB12),
-                                    width: 2,
-                                  ),
-                                ),
-                              ),
-                              cursorColor: Color(0xFFFFBB12),
-                              focusNode: minuteFocus,
-                              onTap: () {
-                                minuteFocus.requestFocus();
-                                setState(() {});
-                              },
-                              onSubmitted: (String value) {
-                                try {
-                                  int currentValue = int.parse(value);
-                                  if (currentValue >= 0 && currentValue <= 59) {
-                                    minuteError = false;
-                                    minuteValue = value;
-                                  } else {
-                                    throw Error();
-                                  }
-                                } catch (e) {
-                                  minuteError = true;
-                                  minuteValue = null;
-                                }
-                                setState(() {});
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+    if (data != null) {
+      return Container(
+        width: MediaQuery.of(context).size.width,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Container(
+            margin: EdgeInsets.only(
+              top: 16,
+              bottom: 16,
+              left: 16,
+              right: 16,
+            ),
+            child: Wrap(
+              direction: Axis.vertical,
+              spacing: 14,
+              // Весь контент экрана по центру
+              runAlignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                buildChooseDate(),
+                buildChooseTime(),
+                buildChooseMood(),
+              ],
+            ),
           ),
         ),
+      );
+    } else {
+      return Center(
+        child: Text(
+          'Перезагрузите экран 😣',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      );
+    }
+  }
+
+  Widget buildChooseDate() {
+    return Container(
+      width: 350,
+      child: TextField(
+        inputFormatters: [
+          LengthLimitingTextInputFormatter(10),
+        ],
+        style: TextStyle(
+          fontSize: 16,
+          color: Colors.black,
+        ),
+        decoration: InputDecoration(
+          labelText: 'Дата',
+          labelStyle: TextStyle(
+            color: Colors.black,
+            fontSize: 16,
+          ),
+          floatingLabelStyle: TextStyle(
+            color: dateError ? Colors.red : Color(0xFFFFBB12),
+          ),
+          helperText: "DD.MM.YYYY",
+          helperStyle: TextStyle(
+            color: Colors.black,
+            fontSize: 12,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: dateError ? Colors.red : Color(0xFFFFBB12),
+              width: 2,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Color(0xFFFFBB12),
+              width: 2,
+            ),
+          ),
+          counterText: dateError ? "Некорректная дата" : "",
+          counterStyle: TextStyle(
+            color: Colors.red,
+            fontSize: 12,
+          ),
+        ),
+        cursorColor: Color(0xFFFFBB12),
+        onSubmitted: (String value) {
+          RegExp exp = RegExp(r'^[0-9]{2}\.[0-9]{2}\.[0-9]{4}$');
+
+          if (value.length != 10 || !exp.hasMatch(value)) {
+            dateError = true;
+            currentDate = null;
+          } else {
+            dateError = false;
+
+            DateFormat format = DateFormat("dd.MM.yyyy");
+
+            try {
+              currentDate = format.parseStrict(value);
+            } catch (e) {
+              dateError = true;
+              currentDate = null;
+            }
+          }
+
+          setState(() {});
+        },
+      ),
+    );
+  }
+
+  Widget buildChooseTime() {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          width: 1,
+          color: Color(0xFFFFFBFE),
+        ),
+        borderRadius: BorderRadius.all(
+          Radius.circular(28),
+        ),
+        color: Color(0xFFeee8f4),
+      ),
+      padding: EdgeInsets.only(
+        top: 24,
+        bottom: 24,
+        left: 24,
+        right: 24,
+      ),
+      child: Container(
+        child: Wrap(
+          crossAxisAlignment: WrapCrossAlignment.start,
+          direction: Axis.vertical,
+          spacing: 20,
+          children: [
+            Text(
+              "Выберите время настроения",
+              style: TextStyle(
+                fontSize: 12,
+                color: Color(0xFF49454F),
+                letterSpacing: 0.5,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Wrap(
+              spacing: 7,
+              direction: Axis.horizontal,
+              children: [
+                Container(
+                  width: 95,
+                  height: 95,
+                  child: TextField(
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(2),
+                    ],
+                    textAlignVertical: TextAlignVertical.center,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 57,
+                      color: Color(0xFF1C1B1F),
+                    ),
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.only(
+                        bottom: 1,
+                        top: 1,
+                      ),
+                      filled: true,
+                      fillColor: hourFocus.hasFocus
+                          ? Color(0xFFFFECBD)
+                          : Color(0xFFE7E0EC),
+                      floatingLabelStyle: TextStyle(
+                        color:
+                            hourFocus.hasFocus ? Colors.red : Color(0xFFFFBB12),
+                      ),
+                      helperText: "Часы",
+                      helperStyle: TextStyle(
+                        color: Colors.black,
+                        fontSize: 12,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: hourError ? Colors.red : Color(0xFFE7E0EC),
+                          width: 2,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color(0xFFFFBB12),
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                    cursorColor: Color(0xFFFFBB12),
+                    focusNode: hourFocus,
+                    onTap: () {
+                      hourFocus.requestFocus();
+                      setState(() {});
+                    },
+                    onSubmitted: (String value) {
+                      try {
+                        int currentValue = int.parse(value);
+                        if (currentValue >= 0 && currentValue <= 23) {
+                          hourError = false;
+                          hourValue = value;
+                        } else {
+                          throw Error();
+                        }
+                      } catch (e) {
+                        hourError = true;
+                        hourValue = null;
+                      }
+                      setState(() {});
+                    },
+                  ),
+                ),
+                Text(
+                  ":",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 57,
+                  ),
+                ),
+                Container(
+                  width: 95,
+                  height: 95,
+                  child: TextField(
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(2),
+                    ],
+                    textAlignVertical: TextAlignVertical.center,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 57,
+                      color: Color(0xFF1C1B1F),
+                    ),
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.only(
+                        bottom: 1,
+                        top: 1,
+                      ),
+                      filled: true,
+                      fillColor: minuteFocus.hasFocus
+                          ? Color(0xFFFFECBD)
+                          : Color(0xFFE7E0EC),
+                      floatingLabelStyle: TextStyle(
+                        color: minuteFocus.hasFocus
+                            ? Colors.red
+                            : Color(0xFFFFBB12),
+                      ),
+                      helperText: "Минуты",
+                      helperStyle: TextStyle(
+                        color: Colors.black,
+                        fontSize: 12,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: minuteError ? Colors.red : Color(0xFFE7E0EC),
+                          width: 2,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color(0xFFFFBB12),
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                    cursorColor: Color(0xFFFFBB12),
+                    focusNode: minuteFocus,
+                    onTap: () {
+                      minuteFocus.requestFocus();
+                      setState(() {});
+                    },
+                    onSubmitted: (String value) {
+                      try {
+                        int currentValue = int.parse(value);
+                        if (currentValue >= 0 && currentValue <= 59) {
+                          minuteError = false;
+                          minuteValue = value;
+                        } else {
+                          throw Error();
+                        }
+                      } catch (e) {
+                        minuteError = true;
+                        minuteValue = null;
+                      }
+                      setState(() {});
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildChooseMood() {
+    return Container(
+      width: 350,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            child: Text(
+              "Выберите настроение",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            margin: EdgeInsets.only(
+              left: 25,
+            ),
+          ),
+          Wrap(
+            direction: Axis.horizontal,
+            children: data['moods']
+                .map(
+                  (i) => InkWell(
+                    child: Container(
+                      child: SvgPicture.asset(
+                        i['path_icon'],
+                      ),
+                    ),
+                  ),
+                )
+                .toList()
+                .cast<Widget>(),
+          ),
+        ],
       ),
     );
   }

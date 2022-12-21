@@ -6,7 +6,7 @@ import 'package:flutter_svg/svg.dart';
 abstract class DB {
   static Database? _db;
 
-  static int get _version => 1;
+  static int get _version => 2;
 
   static Future<void> init() async {
     if (_db != null) {
@@ -146,7 +146,7 @@ abstract class DB {
         ''');
 
     await db.execute('''
-        INSERT INTO mood(id, title, path_icon, value) VALUES(5, "Отвратительное", "assets/moods/1.svg", 1)
+        INSERT INTO mood(id, title, path_icon, value) VALUES(5, "Ужасное", "assets/moods/1.svg", 1)
         ''');
 
     //Пример данных, как может быть заполнен месяц
