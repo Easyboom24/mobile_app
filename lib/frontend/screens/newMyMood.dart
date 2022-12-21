@@ -67,9 +67,18 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
   String new_title = 'Новое настроение';
   String old_title = 'Настроение';
 
-  TextEditingController textFieldDate = TextEditingController();
-  bool dateError = false;
   var currentDate = null;
+  bool dateError = false;
+
+  FocusNode hourFocus = FocusNode();
+  var hourValue = null;
+  bool isFocusedHour = false;
+  bool hourError = false;
+
+  FocusNode minuteFocus = FocusNode();
+  var minuteValue = null;
+  bool isFocusedMinute = false;
+  bool minuteError = false;
 
   var data;
 
@@ -81,6 +90,13 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
     });
 
     // dateinput.text = "${DateFormat('dd.MM.yyyy').format(DateTime.now())}";
+  }
+
+  @override
+  void dispose() {
+    hourFocus.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -160,10 +176,14 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
             spacing: 14,
             // Весь контент экрана по центру
             runAlignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Container(
                 width: 350,
                 child: TextField(
+                  inputFormatters: [
+                    LengthLimitingTextInputFormatter(10),
+                  ],
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.black,
@@ -225,7 +245,7 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
                 ),
               ),
               Container(
-                width: 264,
+                width: 260,
                 decoration: BoxDecoration(
                   border: Border.all(
                     width: 1,
@@ -234,26 +254,179 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
                   borderRadius: BorderRadius.all(
                     Radius.circular(28),
                   ),
-                  color: Color(0xFFFFFBFE),
+                  color: Color(0xFFeee8f4),
                 ),
                 padding: EdgeInsets.only(
                   top: 24,
                   bottom: 24,
+                  left: 24,
+                  right: 24,
                 ),
                 child: Container(
-                  child: Column(
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.start,
+                    direction: Axis.vertical,
+                    spacing: 20,
                     children: [
-                      Text("Выберите время настроения"),
-                      Row(
+                      Text(
+                        "Выберите время настроения",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF49454F),
+                          letterSpacing: 0.5,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Wrap(
+                        spacing: 7,
+                        direction: Axis.horizontal,
                         children: [
                           Container(
                             width: 95,
-                            child: TextField(),
+                            height: 95,
+                            child: TextField(
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(2),
+                              ],
+                              textAlignVertical: TextAlignVertical.center,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 57,
+                                color: Color(0xFF1C1B1F),
+                              ),
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.only(
+                                  bottom: 1,
+                                  top: 1,
+                                ),
+                                filled: true,
+                                fillColor: hourFocus.hasFocus
+                                    ? Color(0xFFFFECBD)
+                                    : Color(0xFFE7E0EC),
+                                floatingLabelStyle: TextStyle(
+                                  color: hourFocus.hasFocus
+                                      ? Colors.red
+                                      : Color(0xFFFFBB12),
+                                ),
+                                helperText: "Часы",
+                                helperStyle: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: hourError
+                                        ? Colors.red
+                                        : Color(0xFFE7E0EC),
+                                    width: 2,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color(0xFFFFBB12),
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                              cursorColor: Color(0xFFFFBB12),
+                              focusNode: hourFocus,
+                              onTap: () {
+                                hourFocus.requestFocus();
+                                setState(() {});
+                              },
+                              onSubmitted: (String value) {
+                                try {
+                                  int currentValue = int.parse(value);
+                                  if (currentValue >= 0 && currentValue <= 23) {
+                                    hourError = false;
+                                    hourValue = value;
+                                  } else {
+                                    throw Error();
+                                  }
+                                } catch (e) {
+                                  hourError = true;
+                                  hourValue = null;
+                                }
+                                setState(() {});
+                              },
+                            ),
                           ),
-                          Text(":"),
+                          Text(
+                            ":",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 57,
+                            ),
+                          ),
                           Container(
                             width: 95,
-                            child: TextField(),
+                            height: 95,
+                            child: TextField(
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(2),
+                              ],
+                              textAlignVertical: TextAlignVertical.center,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 57,
+                                color: Color(0xFF1C1B1F),
+                              ),
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.only(
+                                  bottom: 1,
+                                  top: 1,
+                                ),
+                                filled: true,
+                                fillColor: minuteFocus.hasFocus
+                                    ? Color(0xFFFFECBD)
+                                    : Color(0xFFE7E0EC),
+                                floatingLabelStyle: TextStyle(
+                                  color: minuteFocus.hasFocus
+                                      ? Colors.red
+                                      : Color(0xFFFFBB12),
+                                ),
+                                helperText: "Минуты",
+                                helperStyle: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: minuteError
+                                        ? Colors.red
+                                        : Color(0xFFE7E0EC),
+                                    width: 2,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color(0xFFFFBB12),
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                              cursorColor: Color(0xFFFFBB12),
+                              focusNode: minuteFocus,
+                              onTap: () {
+                                minuteFocus.requestFocus();
+                                setState(() {});
+                              },
+                              onSubmitted: (String value) {
+                                try {
+                                  int currentValue = int.parse(value);
+                                  if (currentValue >= 0 && currentValue <= 59) {
+                                    minuteError = false;
+                                    minuteValue = value;
+                                  } else {
+                                    throw Error();
+                                  }
+                                } catch (e) {
+                                  minuteError = true;
+                                  minuteValue = null;
+                                }
+                                setState(() {});
+                              },
+                            ),
                           ),
                         ],
                       ),
