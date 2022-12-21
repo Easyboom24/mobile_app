@@ -108,7 +108,7 @@ class _MeditationPageState extends State<MeditationPage> {
                   MaterialPageRoute(builder: (context) => MyMyMood(-1)));
             } else if (index == 0) {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => MyApp(-1)));
+                  context, MaterialPageRoute(builder: (context) => MyApp()));
             }
           });
         },
