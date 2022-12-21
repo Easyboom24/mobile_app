@@ -621,7 +621,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   MaterialPageRoute(builder: (context) => MyMyMood(-1)));
             } else if (index == 2) {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => Meditation(-1)));
+                  MaterialPageRoute(builder: (context) => Meditation()));
             }
           });
         },

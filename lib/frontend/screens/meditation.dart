@@ -7,9 +7,8 @@ import '/backend/services/db.dart';
 import 'package:mobile_app/frontend/screens/newMyMood.dart';
 
 class Meditation extends StatelessWidget {
-  int id_meditation;
 
-  Meditation(int this.id_meditation, {super.key});
+  Meditation({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,24 +17,20 @@ class Meditation extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: generateMaterialColor(color: Color(0xFFFFFFFF)),
       ),
-      home: MeditationPage(id_meditation),
+      home: MeditationPage(),
     );
   }
 }
 
 class MeditationPage extends StatefulWidget {
-  int id_meditation;
-
-  MeditationPage(int this.id_meditation, {super.key});
+  MeditationPage({super.key});
 
   @override
-  State<MeditationPage> createState() => _MeditationPageState(id_meditation);
+  State<MeditationPage> createState() => _MeditationPageState();
 }
 
 class _MeditationPageState extends State<MeditationPage> {
-  int id_meditation;
-
-  _MeditationPageState(int this.id_meditation);
+  _MeditationPageState();
 
   @override
   Widget build(BuildContext context) {
