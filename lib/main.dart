@@ -6,6 +6,7 @@ import 'package:material_color_generator/material_color_generator.dart';
 
 import 'package:mobile_app/backend/services/db.dart';
 import 'package:mobile_app/frontend/projectColors.dart';
+import 'package:mobile_app/frontend/screens/meditation.dart';
 import 'package:mobile_app/frontend/screens/newMyMood.dart';
 import 'package:mobile_app/frontend/screens/reminder.dart';
 import 'package:sqflite/sqflite.dart';
@@ -19,11 +20,12 @@ void main() async {
 
   await DB.init();
 
-  runApp(const MyApp());
+  runApp(MyApp(-1));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  int id_my_app;
+  MyApp(int this.id_my_app, {super.key});
 
   // This widget is the root of your application.
   @override
@@ -42,13 +44,15 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: generateMaterialColor(color: Color(0xFFFFFFFF)),
       ),
-      home: const MyHomePage(),
+      home: MyHomePage(id_my_app),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  int id_my_app;
+
+  MyHomePage(int this.id_my_app, {super.key});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -60,10 +64,12 @@ class MyHomePage extends StatefulWidget {
   // always marked "final".
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState(id_my_app);
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  int id_my_app;
+  _MyHomePageState(int this.id_my_app);
   var months = {
     1: 'Январь',
     2: 'Февраль',
@@ -493,9 +499,11 @@ class _MyHomePageState extends State<MyHomePage> {
               children: data['myMoodList']
                   .map(
                     (i) => InkWell(
-                      onLongPress: (){
+                      onLongPress: () {
                         Navigator.push(
-                            context, MaterialPageRoute(builder: (context) => MyMyMood(i['id'])));
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MyMyMood(i['id'])));
                       },
                       child: Container(
                         width: 350,
@@ -613,8 +621,11 @@ class _MyHomePageState extends State<MyHomePage> {
         onTap: (int index) {
           setState(() {
             if (index == 1) {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => MyMyMood(-1)));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => MyMyMood(-1)));
+            } else if (index == 2) {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Meditation(-1)));
             }
           });
         },
