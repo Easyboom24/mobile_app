@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 // colors v1
 const firstColor = 0xFFFFFFFF;
 const secondColor = 0xFF000000;
+const thirdColor = 0x2980b9;
 
 const MaterialColor primarySwatchMaterialColor =
 MaterialColor(firstColor, <int, Color>{

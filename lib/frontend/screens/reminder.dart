@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_color_generator/material_color_generator.dart';
+import '../../backend/controllers/reminderController.dart';
 import '../projectColors.dart';
 import '/backend/services/db.dart';
 
@@ -119,7 +120,31 @@ class _ReminderPageState extends State<ReminderPage> {
   }
 
   buildBodyMainPage(BuildContext context) {
-    return Text("Hello");
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: 130,
+      alignment: Alignment.topLeft,
+      padding: EdgeInsets.all(20),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Text(
+                "20:13", //Подстановка из БД
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
+            ),
+            flex: 1,
+          ),
+          Expanded(
+            child: Container(),
+            flex: 2,
+          ),
+          Expanded(
+            child: SwitchReminder(),
+            flex: 1,
+          ),
+        ],
+      ),
+    );
   }
 
 }
