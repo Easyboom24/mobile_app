@@ -1,4 +1,5 @@
 import 'package:badges/badges.dart' as BadgeWidget;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:material_color_generator/material_color_generator.dart';
@@ -65,9 +66,10 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
 
   String new_title = 'Новое настроение';
   String old_title = 'Настроение';
-  TextEditingController textFieldDate = TextEditingController();
 
+  TextEditingController textFieldDate = TextEditingController();
   bool dateError = false;
+  var currentDate = null;
 
   var data;
 
@@ -143,10 +145,7 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
 
   Widget buildBodyMainPage(BuildContext context) {
     return Container(
-      width: MediaQuery
-          .of(context)
-          .size
-          .width,
+      width: MediaQuery.of(context).size.width,
       child: SingleChildScrollView(
         scrollDirection: Axis.vertical,
         child: Container(
@@ -158,48 +157,110 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
           ),
           child: Wrap(
             direction: Axis.vertical,
-            spacing: 10,
+            spacing: 14,
             // Весь контент экрана по центру
             runAlignment: WrapAlignment.center,
             children: [
               Container(
                 width: 350,
                 child: TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Введите дату',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                  decoration: InputDecoration(
+                    labelText: 'Дата',
                     labelStyle: TextStyle(
                       color: Colors.black,
+                      fontSize: 16,
+                    ),
+                    floatingLabelStyle: TextStyle(
+                      color: dateError ? Colors.red : Color(0xFFFFBB12),
+                    ),
+                    helperText: "DD.MM.YYYY",
+                    helperStyle: TextStyle(
+                      color: Colors.black,
+                      fontSize: 12,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: dateError ? Colors.red : Color(0xFFFFBB12),
+                        width: 2,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(0xFFFFBB12),
+                        width: 2,
+                      ),
+                    ),
+                    counterText: dateError ? "Некорректная дата" : "",
+                    counterStyle: TextStyle(
+                      color: Colors.red,
+                      fontSize: 12,
                     ),
                   ),
-                  cursorColor: Colors.black,
-                  controller: textFieldDate,
-                  onChanged: (String value) {
+                  cursorColor: Color(0xFFFFBB12),
+                  onSubmitted: (String value) {
                     RegExp exp = RegExp(r'^[0-9]{2}\.[0-9]{2}\.[0-9]{4}$');
 
                     if (value.length != 10 || !exp.hasMatch(value)) {
-                      setState(() {
-                        dateError = true;
-                      });
-                    } else{
-                      setState(() {
-                        dateError = false;
-                      });
-                      DateFormat format = DateFormat("dd.MM.yyyy");
-                      DateTime currentDate = DateTime.now();
+                      dateError = true;
+                      currentDate = null;
+                    } else {
+                      dateError = false;
 
-                      try{
+                      DateFormat format = DateFormat("dd.MM.yyyy");
+
+                      try {
                         currentDate = format.parseStrict(value);
-                      }
-                      catch(e){
+                      } catch (e) {
                         dateError = true;
+                        currentDate = null;
                       }
                     }
 
-                    print(exp.hasMatch(value));
+                    setState(() {});
                   },
                 ),
               ),
-              Text(dateError.toString()),
+              Container(
+                width: 264,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    width: 1,
+                    color: Color(0xFFFFFBFE),
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(28),
+                  ),
+                  color: Color(0xFFFFFBFE),
+                ),
+                padding: EdgeInsets.only(
+                  top: 24,
+                  bottom: 24,
+                ),
+                child: Container(
+                  child: Column(
+                    children: [
+                      Text("Выберите время настроения"),
+                      Row(
+                        children: [
+                          Container(
+                            width: 95,
+                            child: TextField(),
+                          ),
+                          Text(":"),
+                          Container(
+                            width: 95,
+                            child: TextField(),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
