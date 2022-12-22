@@ -93,12 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    var tempData = getMainData(selectedMonthCode, selectedYear);
-    tempData.then((s) {
-      setState(() {
-        data = s;
-      });
-    });
+    refreshData();
   }
 
   void refreshData() {
