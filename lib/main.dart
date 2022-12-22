@@ -54,11 +54,11 @@ class MyHomePage extends StatefulWidget {
   static PageRouteBuilder getRoute() {
     return PageRouteBuilder(
         transitionsBuilder: (_, animation, secondAnimation, child) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
-        }, pageBuilder: (_, __, ___) {
+      return FadeTransition(
+        opacity: animation,
+        child: child,
+      );
+    }, pageBuilder: (_, __, ___) {
       return MyHomePage();
     });
   }
@@ -153,8 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
       children: [
         IconButton(
             onPressed: () {
-              Navigator.push(
-                  context, ReminderPage.getRoute());
+              Navigator.push(context, ReminderPage.getRoute());
             },
             icon: Icon(
               Icons.notifications_none,
@@ -505,8 +504,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     (i) => InkWell(
                       onLongPress: () async {
                         await Navigator.push(
-                            context,
-                            MyMyMoodPage.getRoute(i['id']));
+                            context, MyMyMoodPage.getRoute(i['id']));
                         refreshData();
                       },
                       child: Container(
@@ -622,16 +620,13 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         elevation: 0,
         iconSize: 30,
-        onTap: (int index) {
-          setState(() async {
-            if (index == 1) {
-              await Navigator.push(context,
-                  MyMyMoodPage.getRoute(-1));
-            } else if (index == 2) {
-              Navigator.push(context,
-                  MeditationPage.getRoute());
-            }
-          });
+        onTap: (int index) async {
+          if (index == 1) {
+            await Navigator.push(context, MyMyMoodPage.getRoute(-1));
+          } else if (index == 2) {
+            Navigator.push(context, MeditationPage.getRoute());
+          }
+          refreshData();
         },
         items: [
           BottomNavigationBarItem(

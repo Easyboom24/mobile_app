@@ -79,30 +79,36 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
 
   _MyMyMoodPageState(int this.id_my_mood);
 
+  bool initFromData = false;
+
   String new_title = 'Новое настроение';
   String old_title = 'Настроение';
 
+  TextEditingController dateController = TextEditingController();
   FocusNode dateFocus = FocusNode();
-  var currentDate = null;
+  DateTime? currentDate = null;
   bool dateError = false;
 
+  TextEditingController hourController = TextEditingController();
   FocusNode hourFocus = FocusNode();
   var hourValue = null;
   bool hourError = false;
 
+  TextEditingController minuteController = TextEditingController();
   FocusNode minuteFocus = FocusNode();
   var minuteValue = null;
   bool minuteError = false;
 
   int? currentMood = null;
 
+  TextEditingController commentController = TextEditingController();
   FocusNode commentFocus = FocusNode();
-  String? commentValue = null;
+  String? commentValue = "";
   bool commentError = false;
 
   List<int> choseEvents = [];
 
-  var data;
+  Map<String, dynamic>? data;
 
   @override
   void initState() {
@@ -167,7 +173,7 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
 
   Widget buildAppBarTitleMainPage(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text(
           '${id_my_mood > 0 ? old_title : new_title}',
@@ -182,6 +188,30 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
   }
 
   Widget buildBodyMainPage(BuildContext context) {
+    if (id_my_mood > 0 && data != null && initFromData == false) {
+      initFromData = true;
+
+      choseEvents = data!['my_mood']['events'];
+      currentMood = data!['my_mood']['id_mood'];
+
+      DateTime myMoodDateTime = data!['my_mood']['date'];
+      DateTime myMoodDate = DateUtils.dateOnly(myMoodDateTime);
+
+      currentDate = myMoodDate;
+      dateController.text = DateFormat('dd.MM.yyyy').format(myMoodDate);
+
+      hourValue = myMoodDateTime.hour.toString();
+      hourController.text = myMoodDateTime.hour.toString();
+
+      minuteValue = myMoodDateTime.minute.toString();
+      minuteController.text = myMoodDateTime.minute.toString();
+
+      commentValue = data!['my_mood']['comment'];
+      commentController.text = data!['my_mood']['comment'];
+
+      setState(() {});
+    }
+
     if (data != null) {
       return Container(
         width: MediaQuery.of(context).size.width,
@@ -206,6 +236,8 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
                 buildChooseMood(),
                 buildComment(),
                 buildEvents(),
+                buildSaveButton(),
+                buildDeleteButton(),
               ],
             ),
           ),
@@ -230,6 +262,7 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
       width: 350,
       child: TextField(
         focusNode: dateFocus,
+        controller: dateController,
         inputFormatters: [
           LengthLimitingTextInputFormatter(10),
         ],
@@ -272,6 +305,27 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
         cursorColor: Color(0xFFFFBB12),
         onTap: () {
           dateFocus.requestFocus();
+          setState(() {});
+        },
+        onChanged: (String value) {
+          RegExp exp = RegExp(r'^[0-9]{2}\.[0-9]{2}\.[0-9]{4}$');
+
+          if (value.length != 10 || !exp.hasMatch(value)) {
+            dateError = true;
+            currentDate = null;
+          } else {
+            dateError = false;
+
+            DateFormat format = DateFormat("dd.MM.yyyy");
+
+            try {
+              currentDate = format.parseStrict(value);
+            } catch (e) {
+              dateError = true;
+              currentDate = null;
+            }
+          }
+
           setState(() {});
         },
         onSubmitted: (String value) {
@@ -340,6 +394,7 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
                   width: 95,
                   height: 95,
                   child: TextField(
+                    controller: hourController,
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(2),
                     ],
@@ -386,6 +441,21 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
                       hourFocus.requestFocus();
                       setState(() {});
                     },
+                    onChanged: (String value) {
+                      try {
+                        int currentValue = int.parse(value);
+                        if (currentValue >= 0 && currentValue <= 23) {
+                          hourError = false;
+                          hourValue = value;
+                        } else {
+                          throw Error();
+                        }
+                      } catch (e) {
+                        hourError = true;
+                        hourValue = null;
+                      }
+                      setState(() {});
+                    },
                     onSubmitted: (String value) {
                       try {
                         int currentValue = int.parse(value);
@@ -414,6 +484,7 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
                   width: 95,
                   height: 95,
                   child: TextField(
+                    controller: minuteController,
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(2),
                     ],
@@ -459,6 +530,21 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
                     focusNode: minuteFocus,
                     onTap: () {
                       minuteFocus.requestFocus();
+                      setState(() {});
+                    },
+                    onChanged: (String value) {
+                      try {
+                        int currentValue = int.parse(value);
+                        if (currentValue >= 0 && currentValue <= 59) {
+                          minuteError = false;
+                          minuteValue = value;
+                        } else {
+                          throw Error();
+                        }
+                      } catch (e) {
+                        minuteError = true;
+                        minuteValue = null;
+                      }
                       setState(() {});
                     },
                     onSubmitted: (String value) {
@@ -519,7 +605,7 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
             child: Wrap(
               direction: Axis.horizontal,
               crossAxisAlignment: WrapCrossAlignment.center,
-              children: data['moods']
+              children: data!['moods']
                   .map(
                     (i) => InkWell(
                       child: Container(
@@ -582,6 +668,7 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
             child: Container(
               padding: EdgeInsets.only(top: 16, bottom: 16),
               child: TextField(
+                controller: commentController,
                 focusNode: commentFocus,
                 style: TextStyle(
                   fontSize: 16,
@@ -612,6 +699,14 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
                 cursorWidth: 1,
                 onTap: () {
                   commentFocus.requestFocus();
+                  setState(() {});
+                },
+                onChanged: (String value) {
+                  commentValue = value;
+                  setState(() {});
+                },
+                onSubmitted: (String value) {
+                  commentValue = value;
                   setState(() {});
                 },
               ),
@@ -647,7 +742,7 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
               spacing: 14,
               direction: Axis.vertical,
               crossAxisAlignment: WrapCrossAlignment.start,
-              children: data['events_by_category']
+              children: data!['events_by_category']
                   .map(
                     (category) => Container(
                       child: BadgeWidget.Badge(
@@ -782,5 +877,130 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
         ],
       ),
     );
+  }
+
+  Widget buildSaveButton() {
+    return InkWell(
+      child: Container(
+        width: 270,
+        height: 60,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Color(0xFF2ECC71),
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: Text(
+          "Сохранить",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 0.1,
+          ),
+        ),
+      ),
+      onTap: () async {
+        String errorMessage = "";
+
+        if (currentDate == null) {
+          errorMessage = "Введите корректную дату";
+        } else if (hourValue == null) {
+          errorMessage = "Введите корректные часы";
+        } else if (minuteValue == null) {
+          errorMessage = "Введите корректные минуты";
+        } else if (currentMood == null) {
+          errorMessage = "Выберите настроение";
+        } else if (commentValue == null) {
+          errorMessage = "Введите комментарий";
+        } else if (choseEvents.length == 0) {
+          errorMessage = "Выберите хотя бы одно занятие";
+        }
+
+        if (errorMessage.length != 0) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "${errorMessage}",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  letterSpacing: 0.5,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          );
+        } else {
+          try {
+            if (id_my_mood > 0) {
+              await updateMyMood(
+                  id_my_mood,
+                  currentDate!,
+                  int.parse(hourValue),
+                  int.parse(minuteValue),
+                  currentMood!,
+                  commentValue!,
+                  choseEvents);
+            } else {
+              await createMyMood(
+                  currentDate!,
+                  int.parse(hourValue),
+                  int.parse(minuteValue),
+                  currentMood!,
+                  commentValue!,
+                  choseEvents);
+            }
+            Navigator.pop(context, true);
+          } catch (e) {
+            print(e);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  "Проверьте введеные данные, перезайдите на экран.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    letterSpacing: 0.5,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            );
+          }
+        }
+      },
+    );
+  }
+
+  Widget buildDeleteButton() {
+    if (id_my_mood > 0) {
+      return InkWell(
+        child: Container(
+          width: 270,
+          height: 60,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Color(0xFFE74C3C),
+            borderRadius: BorderRadius.circular(100),
+          ),
+          child: Text(
+            "Удалить",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 0.1,
+            ),
+          ),
+        ),
+        onTap: () {
+          data!['my_mood']['date'] = data!['my_mood']['date'].toString();
+          deleteMyMood(data!['my_mood']);
+          Navigator.pop(context, 'result');
+        },
+      );
+    } else {
+      return Container();
+    }
   }
 }
