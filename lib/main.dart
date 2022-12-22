@@ -623,9 +623,9 @@ class _MyHomePageState extends State<MyHomePage> {
         elevation: 0,
         iconSize: 30,
         onTap: (int index) {
-          setState(() {
+          setState(() async {
             if (index == 1) {
-              Navigator.push(context,
+              await Navigator.push(context,
                   MyMyMoodPage.getRoute(-1));
             } else if (index == 2) {
               Navigator.push(context,
