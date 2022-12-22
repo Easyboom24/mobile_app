@@ -34,13 +34,26 @@ class EditReminder extends StatelessWidget {
         // is not restarted.
         primarySwatch: generateMaterialColor(color: Color(0xFFFFFFFF)),
       ),
-      home: const ReminderPage(title: 'Flutter Demo Home Page'),
+      home: const NewEditReminderPage(),
     );
   }
 }
 
-class ReminderPage extends StatefulWidget {
-  const ReminderPage({super.key, required this.title});
+class NewEditReminderPage extends StatefulWidget {
+
+  static PageRouteBuilder getRoute() {
+    return PageRouteBuilder(
+        transitionsBuilder: (_, animation, secondAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        }, pageBuilder: (_, __, ___) {
+      return NewEditReminderPage();
+    });
+  }
+
+  const NewEditReminderPage({super.key});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -51,13 +64,11 @@ class ReminderPage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
-  final String title;
-
   @override
-  State<ReminderPage> createState() => _ReminderPageState();
+  State<NewEditReminderPage> createState() => _NewEditReminderPageState();
 }
 
-class _ReminderPageState extends State<ReminderPage> {
+class _NewEditReminderPageState extends State<NewEditReminderPage> {
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +85,15 @@ class _ReminderPageState extends State<ReminderPage> {
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
           elevation: 0,
+          leading:
+          IconButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              icon: Icon(
+                Icons.arrow_back,
+                size: 24,
+              )),
           title: buildAppBarTitleReminderPage(context),
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Color(firstColor),
@@ -89,16 +109,8 @@ class _ReminderPageState extends State<ReminderPage> {
 
   buildAppBarTitleReminderPage(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        IconButton(
-            onPressed: () {
-              Navigator.of(context, rootNavigator: true).pop();
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              size: 24,
-            )),
         Text(
           'Новое напоминание',
           style: TextStyle(
@@ -107,14 +119,6 @@ class _ReminderPageState extends State<ReminderPage> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        IconButton(
-          onPressed: () {},
-          icon: Icon(
-            Icons.calendar_today_outlined,
-            size: 24,
-          ),
-          color: Color(0x00000000),
-        )
       ],
     );
   }

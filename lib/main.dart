@@ -50,6 +50,18 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
+  static PageRouteBuilder getRoute() {
+    return PageRouteBuilder(
+        transitionsBuilder: (_, animation, secondAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        }, pageBuilder: (_, __, ___) {
+      return MyHomePage();
+    });
+  }
+
   const MyHomePage({super.key});
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -141,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
         IconButton(
             onPressed: () {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Reminder()));
+                  context, ReminderPage.getRoute());
             },
             icon: Icon(
               Icons.notifications_none,
@@ -493,8 +505,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       onLongPress: () {
                         Navigator.push(
                             context,
-                            MaterialPageRoute(
-                                builder: (context) => MyMyMood(i['id'])));
+                            MyMyMoodPage.getRoute(-1));
                       },
                       child: Container(
                         width: 350,
@@ -613,10 +624,10 @@ class _MyHomePageState extends State<MyHomePage> {
           setState(() {
             if (index == 1) {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => MyMyMood(-1)));
+                  MyMyMoodPage.getRoute(-1));
             } else if (index == 2) {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => Meditation()));
+                  MeditationPage.getRoute());
             }
           });
         },

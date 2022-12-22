@@ -73,6 +73,11 @@ flutter:
     - assets/moods/3.svg
     - assets/moods/4.svg
     - assets/moods/5.svg
+    - assets/moods/1-selected.svg
+    - assets/moods/2-selected.svg
+    - assets/moods/3-selected.svg
+    - assets/moods/4-selected.svg
+    - assets/moods/5-selected.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

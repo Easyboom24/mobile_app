@@ -23,6 +23,19 @@ class Meditation extends StatelessWidget {
 }
 
 class MeditationPage extends StatefulWidget {
+
+  static PageRouteBuilder getRoute() {
+    return PageRouteBuilder(
+        transitionsBuilder: (_, animation, secondAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        }, pageBuilder: (_, __, ___) {
+      return MeditationPage();
+    });
+  }
+
   MeditationPage({super.key});
 
   @override
@@ -158,10 +171,10 @@ class _MeditationPageState extends State<MeditationPage> {
           setState(() {
             if (index == 1) {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => MyMyMood(-1)));
+                  MyMyMoodPage.getRoute(-1));
             } else if (index == 0) {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => MyApp()));
+                  context, MyHomePage.getRoute());
             }
           });
         },

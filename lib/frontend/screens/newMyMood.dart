@@ -7,6 +7,7 @@ import 'package:mobile_app/backend/controllers/newMyMoodController.dart';
 
 import 'package:mobile_app/backend/services/db.dart';
 import 'package:mobile_app/frontend/projectColors.dart';
+import 'package:mobile_app/frontend/screens/newEvent.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../main.dart';
 import '/backend/controllers/mainController.dart';
@@ -44,6 +45,20 @@ class MyMyMood extends StatelessWidget {
 class MyMyMoodPage extends StatefulWidget {
   int id_my_mood;
 
+  static PageRouteBuilder getRoute(int id_my_mood) {
+    id_my_mood = id_my_mood;
+
+    return PageRouteBuilder(
+        transitionsBuilder: (_, animation, secondAnimation, child) {
+      return FadeTransition(
+        opacity: animation,
+        child: child,
+      );
+    }, pageBuilder: (_, __, ___) {
+      return MyMyMoodPage(id_my_mood);
+    });
+  }
+
   MyMyMoodPage(int this.id_my_mood, {super.key});
 
   // This widget is the home page of your application. It is stateful, meaning
@@ -67,25 +82,36 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
   String new_title = 'Новое настроение';
   String old_title = 'Настроение';
 
+  FocusNode dateFocus = FocusNode();
   var currentDate = null;
   bool dateError = false;
 
   FocusNode hourFocus = FocusNode();
   var hourValue = null;
-  bool isFocusedHour = false;
   bool hourError = false;
 
   FocusNode minuteFocus = FocusNode();
   var minuteValue = null;
-  bool isFocusedMinute = false;
   bool minuteError = false;
+
+  int? currentMood = null;
+
+  FocusNode commentFocus = FocusNode();
+  String? commentValue = null;
+  bool commentError = false;
+
+  List<int> choseEvents = [];
 
   var data;
 
   @override
   void initState() {
     super.initState();
-    Future<Map<String, dynamic>> tempData = getMyMoodData(id_my_mood);
+    refreshData();
+  }
+
+  void refreshData() {
+    var tempData = getMyMoodData(id_my_mood);
     tempData.then((s) {
       setState(() {
         data = s;
@@ -95,7 +121,10 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
 
   @override
   void dispose() {
+    dateFocus.dispose();
     hourFocus.dispose();
+    minuteFocus.dispose();
+    commentFocus.dispose();
 
     super.dispose();
   }
@@ -116,6 +145,14 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
           // the App.build method, and use it to set our appbar title.
           elevation: 0,
           title: buildAppBarTitleMainPage(context),
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              icon: Icon(
+                Icons.arrow_back,
+                size: 24,
+              )),
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Color(firstColor),
             statusBarBrightness: Brightness.dark,
@@ -130,16 +167,8 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
 
   Widget buildAppBarTitleMainPage(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        IconButton(
-            onPressed: () {
-              Navigator.of(context, rootNavigator: true).pop();
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              size: 24,
-            )),
         Text(
           '${id_my_mood > 0 ? old_title : new_title}',
           style: TextStyle(
@@ -148,14 +177,6 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        IconButton(
-          onPressed: () {},
-          icon: Icon(
-            Icons.calendar_today_outlined,
-            size: 24,
-          ),
-          color: Color(0x00000000),
-        )
       ],
     );
   }
@@ -183,6 +204,8 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
                 buildChooseDate(),
                 buildChooseTime(),
                 buildChooseMood(),
+                buildComment(),
+                buildEvents(),
               ],
             ),
           ),
@@ -206,6 +229,7 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
     return Container(
       width: 350,
       child: TextField(
+        focusNode: dateFocus,
         inputFormatters: [
           LengthLimitingTextInputFormatter(10),
         ],
@@ -246,6 +270,10 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
           ),
         ),
         cursorColor: Color(0xFFFFBB12),
+        onTap: () {
+          dateFocus.requestFocus();
+          setState(() {});
+        },
         onSubmitted: (String value) {
           RegExp exp = RegExp(r'^[0-9]{2}\.[0-9]{2}\.[0-9]{4}$');
 
@@ -276,7 +304,7 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
       decoration: BoxDecoration(
         border: Border.all(
           width: 1,
-          color: Color(0xFFFFFBFE),
+          color: Color(0xFFeee8f4),
         ),
         borderRadius: BorderRadius.all(
           Radius.circular(28),
@@ -460,9 +488,10 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
 
   Widget buildChooseMood() {
     return Container(
-      width: 350,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Wrap(
+        direction: Axis.vertical,
+        crossAxisAlignment: WrapCrossAlignment.start,
+        spacing: 14,
         children: [
           Container(
             child: Text(
@@ -476,20 +505,279 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
               left: 25,
             ),
           ),
-          Wrap(
-            direction: Axis.horizontal,
-            children: data['moods']
-                .map(
-                  (i) => InkWell(
-                    child: Container(
-                      child: SvgPicture.asset(
-                        i['path_icon'],
+          Container(
+            margin: EdgeInsets.only(top: 5, bottom: 5),
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Color(0xFFf7f2f9),
+                width: 1,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              color: Color(0xFFf7f2f9),
+            ),
+            child: Wrap(
+              direction: Axis.horizontal,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: data['moods']
+                  .map(
+                    (i) => InkWell(
+                      child: Container(
+                        child: SvgPicture.asset(
+                          currentMood == i['id']
+                              ? i['path_icon_selected']
+                              : i['path_icon'],
+                          width: 65,
+                          height: 65,
+                        ),
                       ),
+                      onTap: () {
+                        setState(() {
+                          currentMood = i['id'];
+                        });
+                      },
+                    ),
+                  )
+                  .toList()
+                  .cast<Widget>(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildComment() {
+    return Container(
+      width: 350,
+      child: Wrap(
+        direction: Axis.vertical,
+        crossAxisAlignment: WrapCrossAlignment.start,
+        spacing: 14,
+        children: [
+          Container(
+            child: Text(
+              "Введите свои данные",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            margin: EdgeInsets.only(
+              left: 25,
+            ),
+          ),
+          Container(
+            width: 350,
+            margin: EdgeInsets.only(top: 5, bottom: 5),
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Color(0xFFf7f2f9),
+                width: 1,
+              ),
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              color: Color(0xFFf7f2f9),
+            ),
+            child: Container(
+              padding: EdgeInsets.only(top: 16, bottom: 16),
+              child: TextField(
+                focusNode: commentFocus,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
+                decoration: InputDecoration(
+                  labelText: 'Введите комментарий',
+                  labelStyle: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                  ),
+                  filled: true,
+                  fillColor: Color(0xFFE7E0EC),
+                  enabledBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.black38,
+                      width: 2,
                     ),
                   ),
-                )
-                .toList()
-                .cast<Widget>(),
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.black,
+                      width: 2,
+                    ),
+                  ),
+                ),
+                cursorColor: Colors.black,
+                cursorWidth: 1,
+                onTap: () {
+                  commentFocus.requestFocus();
+                  setState(() {});
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildEvents() {
+    return Container(
+      width: 350,
+      child: Wrap(
+        direction: Axis.vertical,
+        crossAxisAlignment: WrapCrossAlignment.start,
+        spacing: 14,
+        children: [
+          Container(
+            child: Text(
+              "Чем вы занимались?",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            margin: EdgeInsets.only(
+              left: 25,
+            ),
+          ),
+          Container(
+            child: Wrap(
+              spacing: 14,
+              direction: Axis.vertical,
+              crossAxisAlignment: WrapCrossAlignment.start,
+              children: data['events_by_category']
+                  .map(
+                    (category) => Container(
+                      child: BadgeWidget.Badge(
+                        badgeContent: Container(
+                          width: 24,
+                          height: 24,
+                          child: Container(
+                            child: InkWell(
+                              child: Icon(
+                                Icons.add,
+                                size: 24,
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                    context, MyEventPage.getRoute(-1));
+                              },
+                            ),
+                          ),
+                        ),
+                        badgeColor: Color(0xFFe2dde4),
+                        position: BadgeWidget.BadgePosition.topEnd(
+                          end: 7,
+                          top: 10,
+                        ),
+                        child: Container(
+                          width: 350,
+                          margin: EdgeInsets.only(top: 5, bottom: 5),
+                          padding: EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Color(0xFFf7f2f9),
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                            color: Color(0xFFf7f2f9),
+                          ),
+                          child: Wrap(
+                            direction: Axis.vertical,
+                            crossAxisAlignment: WrapCrossAlignment.start,
+                            spacing: 5,
+                            children: [
+                              Text(
+                                "${category['title']}",
+                                style: TextStyle(
+                                  letterSpacing: 0.15,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Wrap(
+                                direction: Axis.horizontal,
+                                crossAxisAlignment: WrapCrossAlignment.start,
+                                spacing: 10,
+                                children: category['events']
+                                    .map(
+                                      (event) => InkWell(
+                                        child: Wrap(
+                                          direction: Axis.vertical,
+                                          crossAxisAlignment:
+                                              WrapCrossAlignment.center,
+                                          spacing: 5,
+                                          children: [
+                                            Container(
+                                              width: 40,
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: choseEvents
+                                                          .contains(event['id'])
+                                                      ? Color(0xFF2980B9)
+                                                      : Color(0xFFe2dde4),
+                                                  width: 1,
+                                                ),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(100)),
+                                                color: choseEvents
+                                                        .contains(event['id'])
+                                                    ? Color(0xFF2980B9)
+                                                    : Color(0xFFe2dde4),
+                                              ),
+                                              child: Icon(
+                                                IconData(
+                                                  int.parse(event['path_icon']),
+                                                  fontFamily: 'MaterialIcons',
+                                                ),
+                                                size: 24,
+                                                color: choseEvents
+                                                        .contains(event['id'])
+                                                    ? Color(0xFFFFFFFF)
+                                                    : Color(0xFF49454F),
+                                              ),
+                                            ),
+                                            Text(
+                                              "${event['title']}",
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                letterSpacing: 0.5,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        onTap: () {
+                                          setState(() {
+                                            if (choseEvents
+                                                .contains(event['id'])) {
+                                              choseEvents.remove(event['id']);
+                                            } else {
+                                              choseEvents.add(event['id']);
+                                            }
+                                          });
+                                        },
+                                        onLongPress: () {
+                                          Navigator.push(context,
+                                              MyEventPage.getRoute(-1));
+                                        },
+                                      ),
+                                    )
+                                    .toList()
+                                    .cast<Widget>(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList()
+                  .cast<Widget>(),
+            ),
           ),
         ],
       ),

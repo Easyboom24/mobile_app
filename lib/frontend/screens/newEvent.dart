@@ -1,22 +1,23 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:badges/badges.dart' as BadgeWidget;
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:material_color_generator/material_color_generator.dart';
-import '../../backend/controllers/deleteReminderController.dart';
-import '../projectColors.dart';
-import '/backend/services/db.dart';
-import 'newEditReminder.dart';
+import 'package:mobile_app/backend/controllers/newMyMoodController.dart';
 
-void main() async {
+import 'package:mobile_app/backend/services/db.dart';
+import 'package:mobile_app/frontend/projectColors.dart';
+import 'package:sqflite/sqflite.dart';
+import '../../main.dart';
+import '/backend/controllers/mainController.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 
-  WidgetsFlutterBinding.ensureInitialized();
+class MyEvent extends StatelessWidget {
+  int id_event;
 
-  await DB.init();
-
-  runApp(const DeleteReminder());
-}
-
-class DeleteReminder extends StatelessWidget {
-  const DeleteReminder({super.key});
+  MyEvent(int this.id_event, {super.key});
 
   // This widget is the root of your application.
   @override
@@ -35,14 +36,18 @@ class DeleteReminder extends StatelessWidget {
         // is not restarted.
         primarySwatch: generateMaterialColor(color: Color(0xFFFFFFFF)),
       ),
-      home: const DeleteReminderPage(),
+      home: MyEventPage(id_event),
     );
   }
 }
 
-class DeleteReminderPage extends StatefulWidget {
+class MyEventPage extends StatefulWidget {
+  int id_event;
 
-  static PageRouteBuilder getRoute() {
+  static PageRouteBuilder getRoute(
+      int id_event) {
+    id_event = id_event;
+
     return PageRouteBuilder(
         transitionsBuilder: (_, animation, secondAnimation, child) {
           return FadeTransition(
@@ -50,11 +55,11 @@ class DeleteReminderPage extends StatefulWidget {
             child: child,
           );
         }, pageBuilder: (_, __, ___) {
-      return DeleteReminderPage();
+      return MyEvent(id_event);
     });
   }
 
-  const DeleteReminderPage({super.key});
+  MyEventPage(int this.id_event, {super.key});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -66,10 +71,23 @@ class DeleteReminderPage extends StatefulWidget {
   // always marked "final".
 
   @override
-  State<DeleteReminderPage> createState() => _DeleteReminderPageState();
+  State<MyEventPage> createState() => _MyEventPageState(id_event);
 }
 
-class _DeleteReminderPageState extends State<DeleteReminderPage> {
+class _MyEventPageState extends State<MyEventPage> {
+  int id_event;
+
+  _MyEventPageState(int this.id_event);
+
+  String new_title = 'Новое Занятие';
+  String old_title = 'Занятие';
+
+  var data;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,16 +104,7 @@ class _DeleteReminderPageState extends State<DeleteReminderPage> {
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
           elevation: 0,
-          title: buildAppBarTitleReminderPage(context),
-          leading:
-          IconButton(
-              onPressed: () {
-                Navigator.pop(context, true);
-              },
-              icon: Icon(
-                Icons.arrow_back,
-                size: 24,
-              )),
+          title: buildAppBarTitleMainPage(context),
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Color(firstColor),
             statusBarBrightness: Brightness.dark,
@@ -106,63 +115,77 @@ class _DeleteReminderPageState extends State<DeleteReminderPage> {
       backgroundColor: Color(firstColor),
       body: buildBodyMainPage(context),
     );
-
   }
-  buildAppBarTitleReminderPage(BuildContext context) {
+
+  Widget buildAppBarTitleMainPage(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+        IconButton(
+            onPressed: () {
+              Navigator.pop(context, true);
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              size: 24,
+            )),
         Text(
-          'Список напоминаний',
+          '${id_event > 0 ? old_title : new_title}',
           style: TextStyle(
             fontSize: 22,
             letterSpacing: 0.5,
             fontWeight: FontWeight.w500,
           ),
         ),
-        ReminderCheckBox(),
+        IconButton(
+          onPressed: () {},
+          icon: Icon(
+            Icons.calendar_today_outlined,
+            size: 24,
+          ),
+          color: Color(0x00000000),
+        )
       ],
     );
   }
 
-  buildBodyMainPage(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-            context, NewEditReminderPage.getRoute());
-      },
-      onLongPress: () {
-        Navigator.push(
-            context, DeleteReminderPage.getRoute());
-      },
-      child: Container(
+  Widget buildBodyMainPage(BuildContext context) {
+    if (data != null) {
+      return Container(
         width: MediaQuery.of(context).size.width,
-        height: 130,
-        alignment: Alignment.topLeft,
-        padding: EdgeInsets.all(20),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                  "20:13", //Подстановка из БД
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
-              ),
-              flex: 2,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Container(
+            margin: EdgeInsets.only(
+              top: 16,
+              bottom: 16,
+              left: 16,
+              right: 16,
             ),
-            Expanded(
-              child: Text(""),
-              flex: 4,
-            ),
-            Expanded(
-              child: ReminderCheckBox(),
-              flex: 1,
-            ),
+            child: Wrap(
+              direction: Axis.vertical,
+              spacing: 14,
+              // Весь контент экрана по центру
+              runAlignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
 
-          ],
+              ],
+            ),
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      return Center(
+        child: Text(
+          'Перезагрузите экран 😣',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      );
+    }
   }
 }
-
-

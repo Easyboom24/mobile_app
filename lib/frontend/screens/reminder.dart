@@ -8,7 +8,6 @@ import 'deleteReminder.dart';
 import 'newEditReminder.dart';
 
 void main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
 
   await DB.init();
@@ -36,13 +35,25 @@ class Reminder extends StatelessWidget {
         // is not restarted.
         primarySwatch: generateMaterialColor(color: Color(0xFFFFFFFF)),
       ),
-      home: const ReminderPage(title: 'Flutter Demo Home Page'),
+      home: const ReminderPage(),
     );
   }
 }
 
 class ReminderPage extends StatefulWidget {
-  const ReminderPage({super.key, required this.title});
+  static PageRouteBuilder getRoute() {
+    return PageRouteBuilder(
+        transitionsBuilder: (_, animation, secondAnimation, child) {
+      return FadeTransition(
+        opacity: animation,
+        child: child,
+      );
+    }, pageBuilder: (_, __, ___) {
+      return ReminderPage();
+    });
+  }
+
+  const ReminderPage({super.key});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -53,14 +64,11 @@ class ReminderPage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
-  final String title;
-
   @override
   State<ReminderPage> createState() => _ReminderPageState();
 }
 
 class _ReminderPageState extends State<ReminderPage> {
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -76,6 +84,14 @@ class _ReminderPageState extends State<ReminderPage> {
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
           elevation: 0,
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              icon: Icon(
+                Icons.arrow_back,
+                size: 24,
+              )),
           title: buildAppBarTitleReminderPage(context),
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Color(firstColor),
@@ -87,20 +103,12 @@ class _ReminderPageState extends State<ReminderPage> {
       backgroundColor: Color(firstColor),
       body: buildBodyMainPage(context),
     );
-
   }
+
   buildAppBarTitleReminderPage(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        IconButton(
-            onPressed: () {
-              Navigator.of(context, rootNavigator: true).pop();
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              size: 24,
-            )),
         Text(
           'Список напоминаний',
           style: TextStyle(
@@ -111,8 +119,7 @@ class _ReminderPageState extends State<ReminderPage> {
         ),
         IconButton(
           onPressed: () {
-            Navigator.push(
-            context, MaterialPageRoute(builder: (context) => EditReminder()));
+            Navigator.push(context, NewEditReminderPage.getRoute());
           },
           icon: Icon(
             Icons.add,
@@ -126,12 +133,10 @@ class _ReminderPageState extends State<ReminderPage> {
   buildBodyMainPage(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => EditReminder()));
+        Navigator.push(context, NewEditReminderPage.getRoute());
       },
       onLongPress: () {
-        Navigator.pushReplacement(
-            this.context, MaterialPageRoute(builder: (context) => DeleteReminder()));
+        Navigator.push(context, DeleteReminderPage.getRoute());
       },
       child: Container(
         width: MediaQuery.of(context).size.width,
@@ -141,10 +146,8 @@ class _ReminderPageState extends State<ReminderPage> {
         child: Row(
           children: <Widget>[
             Expanded(
-              child: Text(
-                "20:13", //Подстановка из БД
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
-              ),
+              child: Text("20:13", //Подстановка из БД
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
               flex: 2,
             ),
             Expanded(
@@ -155,12 +158,9 @@ class _ReminderPageState extends State<ReminderPage> {
               child: SwitchReminder(),
               flex: 1,
             ),
-
           ],
         ),
       ),
     );
   }
 }
-
-
