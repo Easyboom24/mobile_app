@@ -4,8 +4,6 @@ import 'package:material_color_generator/material_color_generator.dart';
 import '../../backend/controllers/reminderController.dart';
 import '../projectColors.dart';
 import '/backend/services/db.dart';
-import 'deleteReminder.dart';
-import 'newEditReminder.dart';
 
 void main() async {
 
@@ -13,11 +11,11 @@ void main() async {
 
   await DB.init();
 
-  runApp(const Reminder());
+  runApp(const EditReminder());
 }
 
-class Reminder extends StatelessWidget {
-  const Reminder({super.key});
+class EditReminder extends StatelessWidget {
+  const EditReminder({super.key});
 
   // This widget is the root of your application.
   @override
@@ -87,8 +85,8 @@ class _ReminderPageState extends State<ReminderPage> {
       backgroundColor: Color(firstColor),
       body: buildBodyMainPage(context),
     );
-
   }
+
   buildAppBarTitleReminderPage(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -102,7 +100,7 @@ class _ReminderPageState extends State<ReminderPage> {
               size: 24,
             )),
         Text(
-          'Список напоминаний',
+          'Новое напоминание',
           style: TextStyle(
             fontSize: 22,
             letterSpacing: 0.5,
@@ -110,57 +108,16 @@ class _ReminderPageState extends State<ReminderPage> {
           ),
         ),
         IconButton(
-          onPressed: () {
-            Navigator.push(
-            context, MaterialPageRoute(builder: (context) => EditReminder()));
-          },
+          onPressed: () {},
           icon: Icon(
-            Icons.add,
-            size: 30,
+            Icons.calendar_today_outlined,
+            size: 24,
           ),
+          color: Color(0x00000000),
         )
       ],
     );
   }
 
-  buildBodyMainPage(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => EditReminder()));
-      },
-      onLongPress: () {
-        Navigator.pushReplacement(
-            this.context, MaterialPageRoute(builder: (context) => DeleteReminder()));
-      },
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        height: 130,
-        alignment: Alignment.topLeft,
-        padding: EdgeInsets.all(20),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                "20:13", //Подстановка из БД
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
-              ),
-              flex: 2,
-            ),
-            Expanded(
-              child: Text(""),
-              flex: 4,
-            ),
-            Expanded(
-              child: SwitchReminder(),
-              flex: 1,
-            ),
-
-          ],
-        ),
-      ),
-    );
-  }
+  buildBodyMainPage(BuildContext context) {}
 }
-
-

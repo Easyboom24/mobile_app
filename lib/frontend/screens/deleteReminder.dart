@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_color_generator/material_color_generator.dart';
-import '../../backend/controllers/reminderController.dart';
+import '../../backend/controllers/deleteReminderController.dart';
 import '../projectColors.dart';
 import '/backend/services/db.dart';
-import 'deleteReminder.dart';
 import 'newEditReminder.dart';
 
 void main() async {
@@ -13,11 +12,11 @@ void main() async {
 
   await DB.init();
 
-  runApp(const Reminder());
+  runApp(const DeleteReminder());
 }
 
-class Reminder extends StatelessWidget {
-  const Reminder({super.key});
+class DeleteReminder extends StatelessWidget {
+  const DeleteReminder({super.key});
 
   // This widget is the root of your application.
   @override
@@ -98,7 +97,7 @@ class _ReminderPageState extends State<ReminderPage> {
               Navigator.of(context, rootNavigator: true).pop();
             },
             icon: Icon(
-              Icons.arrow_back,
+              Icons.close,
               size: 24,
             )),
         Text(
@@ -109,16 +108,7 @@ class _ReminderPageState extends State<ReminderPage> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        IconButton(
-          onPressed: () {
-            Navigator.push(
-            context, MaterialPageRoute(builder: (context) => EditReminder()));
-          },
-          icon: Icon(
-            Icons.add,
-            size: 30,
-          ),
-        )
+        ReminderCheckBox(),
       ],
     );
   }
@@ -130,8 +120,8 @@ class _ReminderPageState extends State<ReminderPage> {
             context, MaterialPageRoute(builder: (context) => EditReminder()));
       },
       onLongPress: () {
-        Navigator.pushReplacement(
-            this.context, MaterialPageRoute(builder: (context) => DeleteReminder()));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => DeleteReminder()));
       },
       child: Container(
         width: MediaQuery.of(context).size.width,
@@ -142,8 +132,8 @@ class _ReminderPageState extends State<ReminderPage> {
           children: <Widget>[
             Expanded(
               child: Text(
-                "20:13", //Подстановка из БД
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
+                  "20:13", //Подстановка из БД
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
               ),
               flex: 2,
             ),
@@ -152,7 +142,7 @@ class _ReminderPageState extends State<ReminderPage> {
               flex: 4,
             ),
             Expanded(
-              child: SwitchReminder(),
+              child: ReminderCheckBox(),
               flex: 1,
             ),
 
