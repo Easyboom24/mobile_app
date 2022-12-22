@@ -44,17 +44,16 @@ class MyEvent extends StatelessWidget {
 class MyEventPage extends StatefulWidget {
   int id_event;
 
-  static PageRouteBuilder getRoute(
-      int id_event) {
+  static PageRouteBuilder getRoute(int id_event) {
     id_event = id_event;
 
     return PageRouteBuilder(
         transitionsBuilder: (_, animation, secondAnimation, child) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
-        }, pageBuilder: (_, __, ___) {
+      return FadeTransition(
+        opacity: animation,
+        child: child,
+      );
+    }, pageBuilder: (_, __, ___) {
       return MyEvent(id_event);
     });
   }
@@ -104,6 +103,14 @@ class _MyEventPageState extends State<MyEventPage> {
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
           elevation: 0,
+          leading: IconButton(
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop(context);
+              },
+              icon: Icon(
+                Icons.arrow_back,
+                size: 24,
+              )),
           title: buildAppBarTitleMainPage(context),
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Color(firstColor),
@@ -119,16 +126,8 @@ class _MyEventPageState extends State<MyEventPage> {
 
   Widget buildAppBarTitleMainPage(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        IconButton(
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-            icon: Icon(
-              Icons.arrow_back,
-              size: 24,
-            )),
         Text(
           '${id_event > 0 ? old_title : new_title}',
           style: TextStyle(
@@ -137,14 +136,6 @@ class _MyEventPageState extends State<MyEventPage> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        IconButton(
-          onPressed: () {},
-          icon: Icon(
-            Icons.calendar_today_outlined,
-            size: 24,
-          ),
-          color: Color(0x00000000),
-        )
       ],
     );
   }
@@ -168,9 +159,7 @@ class _MyEventPageState extends State<MyEventPage> {
               // Весь контент экрана по центру
               runAlignment: WrapAlignment.center,
               crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-
-              ],
+              children: [],
             ),
           ),
         ),

@@ -177,7 +177,7 @@ dynamic getMainData(int monthCode, int year) async {
     for (MoodModel mood in moodsModels) {
       if (myMood['id_mood'] == mood.id) {
         myMoodListOut[myMoodListOut.length - 1]['title'] = mood.title;
-        myMoodListOut[myMoodListOut.length - 1]['path_icon'] = mood.path_icon;
+        myMoodListOut[myMoodListOut.length - 1]['path_icon'] = "${mood.path_icon.substring(0, 14)}-selected.svg";
         break;
       }
     }
@@ -190,13 +190,4 @@ dynamic getMainData(int monthCode, int year) async {
   //Заполнение data
 
   return data;
-}
-
-void deleteMyMood(Map my_mood) async {
-  MyMoodModel myMoodModel = MyMoodModel(
-      id: my_mood['id'],
-      id_mood: my_mood['id_mood'],
-      date: DateTime.parse(my_mood['date']),
-      comment: my_mood['comment']);
-  await DB.delete(MyMoodModel.table, myMoodModel);
 }

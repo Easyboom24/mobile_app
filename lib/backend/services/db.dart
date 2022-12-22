@@ -6,7 +6,7 @@ import 'package:flutter_svg/svg.dart';
 abstract class DB {
   static Database? _db;
 
-  static int get _version => 2;
+  static int get _version => 3;
 
   static Future<void> init() async {
     if (_db != null) {
@@ -152,7 +152,7 @@ abstract class DB {
     //Пример данных, как может быть заполнен месяц
 
     await db.execute('''
-        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(1, 1, "2000-12-01", 'Сегодня у меня непонятное настроение, я проснулся и я заснул обратно.')
+        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(1, 1, "2000-12-01 00:00:00", 'Сегодня у меня непонятное настроение, я проснулся и я заснул обратно.')
     ''');
 
     await db.execute('''
@@ -161,7 +161,7 @@ abstract class DB {
 
 
     await db.execute('''
-        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(2, 5, "2000-12-01", 'Сегодня у меня непонятное настроение, я проснулся и я заснул обратно.')
+        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(2, 5, "2000-12-01 00:00:00", 'Сегодня у меня непонятное настроение, я проснулся и я заснул обратно.')
     ''');
 
     await db.execute('''
@@ -170,7 +170,7 @@ abstract class DB {
 
 
     await db.execute('''
-        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(3, 1, "2000-12-01", 'Сегодня у меня непонятное настроение, я проснулся и я заснул обратно.')
+        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(3, 1, "2000-12-01 00:00:00", 'Сегодня у меня непонятное настроение, я проснулся и я заснул обратно.')
     ''');
 
     await db.execute('''
@@ -179,7 +179,7 @@ abstract class DB {
 
 
     await db.execute('''
-        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(4, 1, "2000-12-04", 'Сегодня у меня непонятное настроение, я проснулся и я заснул обратно.')
+        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(4, 1, "2000-12-04 00:00:00", 'Сегодня у меня непонятное настроение, я проснулся и я заснул обратно.')
     ''');
 
     await db.execute('''
@@ -188,7 +188,7 @@ abstract class DB {
 
 
     await db.execute('''
-        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(5, 1, "2000-12-07", 'Сегодня у меня непонятное настроение, я проснулся и я заснул обратно.')
+        INSERT INTO my_mood(id, id_mood, date, comment) VALUES(5, 1, "2000-12-07 00:00:00", 'Сегодня у меня непонятное настроение, я проснулся и я заснул обратно.')
     ''');
 
     await db.execute('''
