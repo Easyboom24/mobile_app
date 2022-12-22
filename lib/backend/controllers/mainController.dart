@@ -42,8 +42,8 @@ List<int> getListOfYear() {
 
 dynamic getMainData(int monthCode, int year) async {
   //TODO: Временные данные
-  monthCode = 12;
-  year = 2000;
+  // monthCode = 12;
+  // year = 2000;
   //
 
   Map<String, dynamic> data = {
