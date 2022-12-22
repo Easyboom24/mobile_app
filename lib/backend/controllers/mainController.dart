@@ -177,7 +177,7 @@ dynamic getMainData(int monthCode, int year) async {
     for (MoodModel mood in moodsModels) {
       if (myMood['id_mood'] == mood.id) {
         myMoodListOut[myMoodListOut.length - 1]['title'] = mood.title;
-        myMoodListOut[myMoodListOut.length - 1]['path_icon'] = mood.path_icon;
+        myMoodListOut[myMoodListOut.length - 1]['path_icon'] = "${mood.path_icon.substring(0, 14)}-selected.svg";
         break;
       }
     }
