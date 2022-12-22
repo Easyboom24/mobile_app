@@ -10,6 +10,7 @@ import 'package:mobile_app/frontend/screens/newMyMood.dart';
 import 'package:mobile_app/frontend/screens/reminder.dart';
 import 'package:sqflite/sqflite.dart';
 import '/backend/controllers/mainController.dart';
+import '/backend/controllers/newMyMoodController.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -502,10 +503,11 @@ class _MyHomePageState extends State<MyHomePage> {
               children: data['myMoodList']
                   .map(
                     (i) => InkWell(
-                      onLongPress: () {
-                        Navigator.push(
+                      onLongPress: () async {
+                        await Navigator.push(
                             context,
-                            MyMyMoodPage.getRoute(-1));
+                            MyMyMoodPage.getRoute(i['id']));
+                        refreshData();
                       },
                       child: Container(
                         width: 350,

@@ -42,8 +42,8 @@ List<int> getListOfYear() {
 
 dynamic getMainData(int monthCode, int year) async {
   //TODO: Временные данные
-  // monthCode = 12;
-  // year = 2000;
+  monthCode = 12;
+  year = 2000;
   //
 
   Map<String, dynamic> data = {
@@ -190,13 +190,4 @@ dynamic getMainData(int monthCode, int year) async {
   //Заполнение data
 
   return data;
-}
-
-void deleteMyMood(Map my_mood) async {
-  MyMoodModel myMoodModel = MyMoodModel(
-      id: my_mood['id'],
-      id_mood: my_mood['id_mood'],
-      date: DateTime.parse(my_mood['date']),
-      comment: my_mood['comment']);
-  await DB.delete(MyMoodModel.table, myMoodModel);
 }
