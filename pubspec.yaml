@@ -78,6 +78,12 @@ flutter:
     - assets/moods/3-selected.svg
     - assets/moods/4-selected.svg
     - assets/moods/5-selected.svg
+    - assets/images/fire.svg
+    - assets/images/rain.svg
+    - assets/images/wind.svg
+    - assets/images/play.svg
+
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

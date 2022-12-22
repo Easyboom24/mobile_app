@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:material_color_generator/material_color_generator.dart';
 import '../projectColors.dart';
 import '../../main.dart';
@@ -7,7 +8,6 @@ import '/backend/services/db.dart';
 import 'package:mobile_app/frontend/screens/newMyMood.dart';
 
 class Meditation extends StatelessWidget {
-
   Meditation({super.key});
 
   @override
@@ -23,15 +23,14 @@ class Meditation extends StatelessWidget {
 }
 
 class MeditationPage extends StatefulWidget {
-
   static PageRouteBuilder getRoute() {
     return PageRouteBuilder(
         transitionsBuilder: (_, animation, secondAnimation, child) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
-        }, pageBuilder: (_, __, ___) {
+      return FadeTransition(
+        opacity: animation,
+        child: child,
+      );
+    }, pageBuilder: (_, __, ___) {
       return MeditationPage();
     });
   }
@@ -97,6 +96,122 @@ class _MeditationPageState extends State<MeditationPage> {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Container(
+                margin: EdgeInsets.only(
+                  top: 50,
+                ),
+                width: 362,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    width: 1,
+                    color: Color(0xFFFFFBFE),
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12),
+                  ),
+                  color: Color(0xFFeee8f4),
+                ),
+                padding: EdgeInsets.only(
+                  top: 16,
+                  bottom: 16,
+                  left: 16,
+                  right: 16,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(bottom: 15),
+                      child: Text(
+                        "Выберите звук",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(right: 24),
+                            width: 85,
+                            height: 85,
+                            decoration: BoxDecoration(
+                              color: Color(0xFF2980B9),
+                              border: Border.all(
+                                width: 1,
+                                color: Color(0xFF2980B9),
+                              ),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(23),
+                              ),
+                            ),
+                            child: SvgPicture.asset(
+                              "assets/images/fire.svg",
+                              width: 70,
+                              height: 70,
+                            ),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(right: 24),
+                            width: 110,
+                            height: 110,
+                            decoration: BoxDecoration(
+                              color: Color(0xFF2980B9),
+                              border: Border.all(
+                                width: 1,
+                                color: Color(0xFF2980B9),
+                              ),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(23),
+                              ),
+                            ),
+                            child: SvgPicture.asset(
+                              "assets/images/rain.svg",
+                              width: 80,
+                              height: 80,
+                            ),
+                          ),
+                          Container(
+                            width: 85,
+                            height: 85,
+                            decoration: BoxDecoration(
+                              color: Color(0xFF2980B9),
+                              border: Border.all(
+                                width: 1,
+                                color: Color(0xFF2980B9),
+                              ),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(23),
+                              ),
+                            ),
+                            child: SvgPicture.asset(
+                              "assets/images/wind.svg",
+                              width: 70,
+                              height: 70,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      child: Text(
+                        "Дождь",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: "Roboto",
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xff000000),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
                 width: 260,
                 decoration: BoxDecoration(
                   border: Border.all(
@@ -108,6 +223,7 @@ class _MeditationPageState extends State<MeditationPage> {
                   ),
                   color: Color(0xFFeee8f4),
                 ),
+                margin: EdgeInsets.only(top: 30),
                 padding: EdgeInsets.only(
                   top: 24,
                   bottom: 24,
@@ -127,6 +243,143 @@ class _MeditationPageState extends State<MeditationPage> {
                           color: Color(0xFF49454F),
                           letterSpacing: 0.5,
                           fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      Wrap(
+                        spacing: 7,
+                        direction: Axis.horizontal,
+                        children: [
+                          Container(
+                            width: 95,
+                            height: 95,
+                            child: TextField(
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(3),
+                              ],
+                              textAlignVertical: TextAlignVertical.center,
+                              textAlign: TextAlign.center,
+                              // ignore: prefer_const_constructors
+                              style: TextStyle(
+                                fontSize: 57,
+                                color: Color(0xFF1C1B1F),
+                              ),
+                              // ignore: prefer_const_constructors
+                              decoration: InputDecoration(
+                                // ignore: prefer_const_constructors
+                                contentPadding: EdgeInsets.only(
+                                  bottom: 1,
+                                  top: 1,
+                                ),
+                                filled: true,
+
+                                helperText: "Минуты",
+                                helperStyle: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                ),
+
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color(0xFFFFBB12),
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                              cursorColor: Color(0xFFFFBB12),
+                            ),
+                          ),
+                          Text(
+                            ":",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 57,
+                            ),
+                          ),
+                          Container(
+                            width: 95,
+                            height: 95,
+                            child: TextField(
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(3),
+                              ],
+                              textAlignVertical: TextAlignVertical.center,
+                              textAlign: TextAlign.center,
+                              // ignore: prefer_const_constructors
+                              style: TextStyle(
+                                fontSize: 57,
+                                color: Color(0xFF1C1B1F),
+                              ),
+                              // ignore: prefer_const_constructors
+                              decoration: InputDecoration(
+                                // ignore: prefer_const_constructors
+                                contentPadding: EdgeInsets.only(
+                                  bottom: 1,
+                                  top: 1,
+                                ),
+                                filled: true,
+
+                                helperText: "Секунды",
+                                helperStyle: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                ),
+
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Color(0xFFFFBB12),
+                                    width: 2,
+                                  ),
+                                ),
+                              ),
+                              cursorColor: Color(0xFFFFBB12),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Container(
+                width: 214,
+                height: 64,
+                padding: EdgeInsets.only(
+                  top: 12,
+                  bottom: 16,
+                ),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    width: 1,
+                    color: Color(0xFFFFFBFE),
+                  ),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(100),
+                  ),
+                  color: Color(0xFFeee8f4),
+                ),
+                child: Container(
+                  width: double.infinity,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(right: 6),
+                        width: 18,
+                        height: 18,
+                        child: SvgPicture.asset("assets/images/play.svg",
+                            width: 18, height: 18),
+                      ),
+                      Center(
+                        child: Text(
+                          "Начать",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 0.1,
+                              color: Color(0xFF2980B9)),
                         ),
                       ),
                     ],
@@ -170,11 +423,9 @@ class _MeditationPageState extends State<MeditationPage> {
         onTap: (int index) {
           setState(() {
             if (index == 1) {
-              Navigator.push(context,
-                  MyMyMoodPage.getRoute(-1));
+              Navigator.push(context, MyMyMoodPage.getRoute(-1));
             } else if (index == 0) {
-              Navigator.push(
-                  context, MyHomePage.getRoute());
+              Navigator.push(context, MyHomePage.getRoute());
             }
           });
         },
