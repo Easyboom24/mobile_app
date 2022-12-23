@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 
 import '../../frontend/projectColors.dart';
-
+import '../services/db.dart';
+import 'package:mobile_app/backend/models/ReminderModel.dart';
 class SwitchReminder extends StatefulWidget {
-  const SwitchReminder({super.key});
+  bool light;
+  SwitchReminder(bool this.light, {super.key});
 
   @override
-  State<SwitchReminder> createState() => _SwitchReminderState();
+  State<SwitchReminder> createState() => _SwitchReminderState(light);
 }
 
 class _SwitchReminderState extends State<SwitchReminder> {
-  bool light = true;
-  int id = 1; //Здесь указат id из БД
+  bool light;
+
+  _SwitchReminderState(bool this.light);
 
   @override
   Widget build(BuildContext context) {
@@ -31,4 +34,13 @@ class _SwitchReminderState extends State<SwitchReminder> {
     ),
     );
   }
+}
+
+
+//---------------БД--------------
+getReminderData()
+async {
+  List ReminderMaps = await DB.rawQuery("SELECT * FROM ${ReminderModel.table}");
+  //return ReminderMaps;
+  return ReminderMaps.isNotEmpty ? ReminderMaps.map((c) => ReminderModel.fromMap(c)).toList() : [];
 }

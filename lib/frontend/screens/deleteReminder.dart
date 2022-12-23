@@ -6,15 +6,6 @@ import '../projectColors.dart';
 import '/backend/services/db.dart';
 import 'newEditReminder.dart';
 
-void main() async {
-
-  WidgetsFlutterBinding.ensureInitialized();
-
-  await DB.init();
-
-  runApp(const DeleteReminder());
-}
-
 class DeleteReminder extends StatelessWidget {
   const DeleteReminder({super.key});
 
@@ -93,7 +84,7 @@ class _DeleteReminderPageState extends State<DeleteReminderPage> {
                 Navigator.pop(context, true);
               },
               icon: Icon(
-                Icons.arrow_back,
+                Icons.close,
                 size: 24,
               )),
           systemOverlayStyle: SystemUiOverlayStyle(
@@ -127,14 +118,6 @@ class _DeleteReminderPageState extends State<DeleteReminderPage> {
 
   buildBodyMainPage(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-            context, NewEditReminderPage.getRoute());
-      },
-      onLongPress: () {
-        Navigator.push(
-            context, DeleteReminderPage.getRoute());
-      },
       child: Container(
         width: MediaQuery.of(context).size.width,
         height: 130,
