@@ -139,6 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
             statusBarBrightness: Brightness.dark,
             statusBarIconBrightness: Brightness.dark,
           ),
+          automaticallyImplyLeading: false,
         ),
       ),
       backgroundColor: Color(firstColor),
