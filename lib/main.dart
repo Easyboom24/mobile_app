@@ -344,6 +344,8 @@ class _MyHomePageState extends State<MyHomePage> {
               spacing: 10,
               // Весь контент экрана по центру
               runAlignment: WrapAlignment.center,
+              // Весь контент экрана по центру
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 buildGraph(context),
                 buildEventsCount(context),
@@ -418,7 +420,7 @@ class _MyHomePageState extends State<MyHomePage> {
               left: 10,
               right: 10,
             ),
-            width: 350,
+            width: 300,
             decoration: BoxDecoration(
               border: Border.all(
                 width: 1,
@@ -433,46 +435,50 @@ class _MyHomePageState extends State<MyHomePage> {
               spacing: 10,
               children: data['eventsCount']
                   .map(
-                    (i) => (Column(
-                      children: [
-                        BadgeWidget.Badge(
-                          badgeContent: Text(
-                            "${i.value['count']}",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
+                    (i) => Container(
+                      margin: EdgeInsets.only(top: 5, bottom: 5,),
+                      child: (Column(
+                        children: [
+                          BadgeWidget.Badge(
+                            badgeContent: Text(
+                              "${i.value['count']}",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                              ),
                             ),
-                          ),
-                          badgeColor: Color(0xFFB3261E),
-                          position: BadgeWidget.BadgePosition.topEnd(end: -7),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
+                            badgeColor: Color(0xFFB3261E),
+                            position: BadgeWidget.BadgePosition.topEnd(end: -7),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Color(0xFFe9e4e8),
+                                  width: 8,
+                                ),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(100),
+                                ),
                                 color: Color(0xFFe9e4e8),
-                                width: 8,
                               ),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(100),
+                              child: Icon(
+                                IconData(int.parse(i.value['path_icon']),
+                                    fontFamily: 'MaterialIcons'),
+                                color: Color(0xFF49454F),
+                                size: 22,
                               ),
-                              color: Color(0xFFe9e4e8),
-                            ),
-                            child: Icon(
-                              IconData(int.parse(i.value['path_icon']),
-                                  fontFamily: 'MaterialIcons'),
-                              color: Color(0xFF49454F),
-                              size: 22,
                             ),
                           ),
-                        ),
-                        Text(
-                          '${i.value['title']}',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                              letterSpacing: 0.5),
-                        ),
-                      ],
-                    )),
+                          Text(
+                            '${i.value['title']}',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                                letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      )),
+                    ),
                   )
                   .toList()
                   .cast<Widget>(),
@@ -525,7 +531,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         refreshData();
                       },
                       child: Container(
-                        width: 350,
+                        width: 300,
                         height: 90,
                         alignment: Alignment.center,
                         padding: EdgeInsets.only(left: 10, right: 10),
