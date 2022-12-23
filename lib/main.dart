@@ -212,7 +212,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         title: Text(
           'Выберите месяц и год',
-          style: TextStyle(fontSize: 32, fontWeight: FontWeight.w400),
+          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w400),
         ),
         content: Container(
           width: 350,
