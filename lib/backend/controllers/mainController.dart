@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:intl/intl.dart';
 import 'package:mobile_app/backend/models/EventCategoryModel.dart';
 import 'package:mobile_app/backend/models/EventModel.dart';
@@ -107,9 +109,16 @@ dynamic getMainData(int monthCode, int year) async {
 
   //events
   List eventsMaps = await DB.rawQuery(rawQueryEvents + optionWhereEvents);
+  List eventsMapsEditing = [];
+  for(var event in eventsMaps){
+    eventsMapsEditing.add(json.decode(json.encode(event)));
+  }
   List eventsModels = [];
 
-  for (var event in eventsMaps) {
+  for (var event in eventsMapsEditing) {
+    if(event['as_deleted'] != null) {
+      event['as_deleted'] = DateTime.parse(event['as_deleted']);
+    }
     eventsModels.add(EventModel.fromMap(event));
   }
   //events
@@ -173,7 +182,7 @@ dynamic getMainData(int monthCode, int year) async {
     myMoodListOut[myMoodListOut.length - 1]['id'] = myMood['id'];
     myMoodListOut[myMoodListOut.length - 1]['id_mood'] = myMood['id_mood'];
     myMoodListOut[myMoodListOut.length - 1]['date'] = myMood['date'];
-    myMoodListOut[myMoodListOut.length - 1]['comment'] = myMood['comment'];
+    myMoodListOut[myMoodListOut.length - 1]['comment'] = myMood['comment'].toString();
     for (MoodModel mood in moodsModels) {
       if (myMood['id_mood'] == mood.id) {
         myMoodListOut[myMoodListOut.length - 1]['title'] = mood.title;

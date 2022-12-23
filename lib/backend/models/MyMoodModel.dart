@@ -22,7 +22,7 @@ class MyMoodModel extends Model {
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
       'date': date,
-      'comment': comment
+      'comment': comment.toString()
     };
 
     if (id != null) {
@@ -41,7 +41,7 @@ class MyMoodModel extends Model {
         id: map['id'],
         id_mood: map['id_mood'],
         date: DateTime.parse(map['date']),
-        comment: map['comment']
+        comment: map['comment'].toString(),
     );
   }
 }

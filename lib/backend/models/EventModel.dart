@@ -40,6 +40,7 @@ class EventModel extends Model {
   }
 
   static EventModel fromMap(Map<String, dynamic> map) {
+    // print(map['as_deleted']);
     return EventModel(
         id: map['id'],
         id_event_category: map['id_event_category'],

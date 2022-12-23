@@ -23,7 +23,8 @@ Future<Map<String, dynamic>> getMyMoodData(int id_my_mood) async {
     moodsOutput[moodsOutput.length - 1]['path_icon_selected'] =
         "${moodsOutput[moodsOutput.length - 1]['path_icon'].substring(0, 14)}-selected.svg";
   }
-  data['moods'] = moodsOutput..sort((a, b) => a['value'].compareTo(b['value']));
+  var sortedMoods = moodsOutput..sort((a, b) => a['value'].compareTo(b['value']));
+  data['moods'] = sortedMoods;
 
   List categories = await DB.query(EventCategoryModel.table);
   List events = await DB
