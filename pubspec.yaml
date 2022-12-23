@@ -38,7 +38,7 @@ dependencies:
   intl: ^0.17.0
   graphic: ^1.0.1
   material_color_generator: ^1.1.0
-  textfield_search: ^0.10.0
+  dropdown_textfield: ^1.0.7
 
 
   # The following adds the Cupertino Icons font to your application.

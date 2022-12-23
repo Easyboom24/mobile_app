@@ -755,9 +755,10 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
                                 Icons.add,
                                 size: 24,
                               ),
-                              onTap: () {
-                                Navigator.push(
+                              onTap: () async {
+                                await Navigator.push(
                                     context, MyEventPage.getRoute(-1));
+                                refreshData();
                               },
                             ),
                           ),
@@ -860,9 +861,10 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
                                               }
                                             });
                                           },
-                                          onLongPress: () {
-                                            Navigator.push(context,
+                                          onLongPress: () async {
+                                            await Navigator.push(context,
                                                 MyEventPage.getRoute(event['id']));
+                                            refreshData();
                                           },
                                         ),
                                       )
