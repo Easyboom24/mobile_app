@@ -206,8 +206,8 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
       minuteValue = myMoodDateTime.minute.toString();
       minuteController.text = myMoodDateTime.minute.toString();
 
-      commentValue = data!['my_mood']['comment'];
-      commentController.text = data!['my_mood']['comment'];
+      commentValue = data!['my_mood']['comment'].toString();
+      commentController.text = data!['my_mood']['comment'].toString();
 
       setState(() {});
     }
