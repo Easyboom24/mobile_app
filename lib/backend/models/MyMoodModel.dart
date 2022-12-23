@@ -22,7 +22,7 @@ class MyMoodModel extends Model {
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
       'date': date,
-      'comment': comment
+      'comment': comment.toString()
     };
 
     if (id != null) {
