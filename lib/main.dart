@@ -159,13 +159,30 @@ class _MyHomePageState extends State<MyHomePage> {
               Icons.notifications_none,
               size: 24,
             )),
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 22,
-            letterSpacing: 0.5,
-            fontWeight: FontWeight.w500,
+        InkWell(
+          child: Text(
+            title,
+            style: TextStyle(
+              fontSize: 22,
+              letterSpacing: 0.5,
+              fontWeight: FontWeight.w500,
+            ),
           ),
+          onTap: (){
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  "Ширина: ${MediaQuery.of(context).size.width} | Высота: ${MediaQuery.of(context).size.height}",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    letterSpacing: 0.5,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            );
+          },
         ),
         IconButton(
             onPressed: () {
