@@ -6,6 +6,7 @@ import '../projectColors.dart';
 import '../../main.dart';
 import '/backend/services/db.dart';
 import 'package:mobile_app/frontend/screens/newMyMood.dart';
+import 'package:mobile_app/frontend/screens/playMeditation.dart';
 
 class Meditation extends StatelessWidget {
   Meditation({super.key});
@@ -86,8 +87,6 @@ class _MeditationPageState extends State<MeditationPage> {
           margin: EdgeInsets.only(
             top: 16,
             bottom: 16,
-            left: 16,
-            right: 16,
           ),
           child: Wrap(
             direction: Axis.vertical,
@@ -96,25 +95,19 @@ class _MeditationPageState extends State<MeditationPage> {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Container(
-                margin: EdgeInsets.only(
-                  top: 50,
-                ),
-                width: 362,
+                margin: EdgeInsets.only(top: 50),
+                width: MediaQuery.of(context).size.width * 0.93,
                 decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 1,
-                    color: Color(0xFFFFFBFE),
-                  ),
                   borderRadius: BorderRadius.all(
                     Radius.circular(12),
                   ),
                   color: Color(0xFFeee8f4),
                 ),
                 padding: EdgeInsets.only(
-                  top: 16,
-                  bottom: 16,
-                  left: 16,
-                  right: 16,
+                  top: 12,
+                  bottom: 12,
+                  left: 12,
+                  right: 12,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -135,8 +128,8 @@ class _MeditationPageState extends State<MeditationPage> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Container(
-                            margin: EdgeInsets.only(right: 24),
-                            width: 85,
+                            margin: EdgeInsets.only(right: 22),
+                            width: MediaQuery.of(context).size.width * 0.22,
                             height: 85,
                             decoration: BoxDecoration(
                               color: Color(0xFF2980B9),
@@ -155,8 +148,8 @@ class _MeditationPageState extends State<MeditationPage> {
                             ),
                           ),
                           Container(
-                            margin: EdgeInsets.only(right: 24),
-                            width: 110,
+                            margin: EdgeInsets.only(right: 22),
+                            width: MediaQuery.of(context).size.width * 0.31,
                             height: 110,
                             decoration: BoxDecoration(
                               color: Color(0xFF2980B9),
@@ -175,7 +168,7 @@ class _MeditationPageState extends State<MeditationPage> {
                             ),
                           ),
                           Container(
-                            width: 85,
+                            width: MediaQuery.of(context).size.width * 0.22,
                             height: 85,
                             decoration: BoxDecoration(
                               color: Color(0xFF2980B9),
@@ -340,51 +333,59 @@ class _MeditationPageState extends State<MeditationPage> {
                   ),
                 ),
               ),
-              Container(
-                width: 214,
-                height: 64,
-                padding: EdgeInsets.only(
-                  top: 12,
-                  bottom: 16,
-                ),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 1,
-                    color: Color(0xFFFFFBFE),
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(100),
-                  ),
-                  color: Color(0xFFeee8f4),
+              InkWell(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(100),
                 ),
                 child: Container(
-                  width: double.infinity,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.only(right: 6),
-                        width: 18,
-                        height: 18,
-                        child: SvgPicture.asset("assets/images/play.svg",
-                            width: 18, height: 18),
-                      ),
-                      Center(
-                        child: Text(
-                          "Начать",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 14,
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: 0.1,
-                              color: Color(0xFF2980B9)),
+                  width: 214,
+                  height: 64,
+                  padding: EdgeInsets.only(
+                    top: 12,
+                    bottom: 16,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      width: 1,
+                      color: Color(0xFFFFFBFE),
+                    ),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(100),
+                    ),
+                    color: Color(0xFFeee8f4),
+                  ),
+                  child: Container(
+                    width: double.infinity,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(right: 6),
+                          width: 18,
+                          height: 18,
+                          child: SvgPicture.asset("assets/images/play.svg",
+                              width: 18, height: 18),
                         ),
-                      ),
-                    ],
+                        Center(
+                          child: Text(
+                            "Начать",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontFamily: 'Roboto',
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 0.1,
+                                color: Color(0xFF2980B9)),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
+                onTap: () async {
+                  Navigator.push(context, PlayMeditationPage.getRoute());
+                },
               ),
             ],
           ),

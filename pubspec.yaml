@@ -38,7 +38,7 @@ dependencies:
   intl: ^0.17.0
   graphic: ^1.0.1
   material_color_generator: ^1.1.0
-  dropdown_textfield: ^1.0.7
+  audioplayers: ^0.20.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -83,6 +83,10 @@ flutter:
     - assets/images/rain.svg
     - assets/images/wind.svg
     - assets/images/play.svg
+    - assets/audio/fire.mp3
+    - assets/audio/rain.mp3
+    - assets/audio/wind.mp3
+
 
 
 
