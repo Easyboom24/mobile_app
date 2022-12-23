@@ -40,7 +40,7 @@ class _SwitchReminderState extends State<SwitchReminder> {
 //---------------БД--------------
 getReminderData()
 async {
-  List ReminderMaps = await DB.rawQuery("SELECT * FROM ${ReminderModel.table}");
+  List ReminderMaps = await DB.rawQuery("SELECT * FROM ${ReminderModel.table} ORDER BY time");
   //return ReminderMaps;
   return ReminderMaps.isNotEmpty ? ReminderMaps.map((c) => ReminderModel.fromMap(c)).toList() : [];
 }

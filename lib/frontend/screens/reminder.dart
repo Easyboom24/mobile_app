@@ -128,8 +128,9 @@ class _ReminderPageState extends State<ReminderPage> {
           ),
         ),
         IconButton(
-          onPressed: () {
-            Navigator.push(context, NewEditReminderPage.getRoute(-1));
+          onPressed: () async {
+            await Navigator.push(context, NewEditReminderPage.getRoute(-1));
+            refreshData();
           },
           icon: Icon(
             Icons.add,
@@ -147,15 +148,17 @@ class _ReminderPageState extends State<ReminderPage> {
         : ListView.builder(
         itemBuilder: (context, index){
           return GestureDetector(
-            onTap: () {
-              Navigator.push(context, NewEditReminderPage.getRoute(data![index].id));
+            onTap: () async {
+              await Navigator.push(context, NewEditReminderPage.getRoute(data![index].id));
+              refreshData();
             },
-            onLongPress: () {
-              Navigator.push(context, DeleteReminderPage.getRoute());
+            onLongPress: () async {
+              await Navigator.push(context, DeleteReminderPage.getRoute());
+              refreshData();
             },
             child: Container(
               width: MediaQuery.of(context).size.width,
-              height: 130,
+              height: 100,
               alignment: Alignment.topLeft,
               padding: EdgeInsets.all(20),
               child: Row(

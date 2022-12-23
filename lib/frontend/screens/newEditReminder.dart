@@ -413,6 +413,11 @@ class _NewEditReminderPageState extends State<NewEditReminderPage> {
                           } else {
                           if (id_reminder < 0){
                             await createReminder(int.parse(hourValue), int.parse(minuteValue));
+                            Navigator.pop(context, true);
+                          }
+                          else{
+                            await updateReminder(id_reminder, int.parse(hourValue), int.parse(minuteValue));
+                            Navigator.pop(context, true);
                           }
                         }
                       },

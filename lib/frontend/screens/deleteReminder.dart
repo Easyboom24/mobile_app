@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_color_generator/material_color_generator.dart';
+import 'package:mobile_app/backend/controllers/newEditReminderController.dart';
 import '../../backend/controllers/deleteReminderController.dart';
+import '../../backend/models/ReminderModel.dart';
 import '../projectColors.dart';
 import '/backend/services/db.dart';
 import 'newEditReminder.dart';
+
+List<int> deleteItems = [];
 
 class DeleteReminder extends StatelessWidget {
   const DeleteReminder({super.key});
@@ -62,6 +66,22 @@ class DeleteReminderPage extends StatefulWidget {
 
 class _DeleteReminderPageState extends State<DeleteReminderPage> {
 
+  List<ReminderModel>? data;
+  @override
+  void initState() {
+    super.initState();
+    refreshData();
+  }
+
+  void refreshData() {
+    var tempData = getReminderData();
+    tempData.then((s) {
+      setState(() {
+        data = s;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -96,6 +116,7 @@ class _DeleteReminderPageState extends State<DeleteReminderPage> {
       ),
       backgroundColor: Color(firstColor),
       body: buildBodyMainPage(context),
+      bottomNavigationBar: buildBottomNavigationBar(context),
     );
 
   }
@@ -111,41 +132,136 @@ class _DeleteReminderPageState extends State<DeleteReminderPage> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        ReminderCheckBox(),
+        ReminderCheckBox(-1),
       ],
     );
   }
 
   buildBodyMainPage(BuildContext context) {
-    return GestureDetector(
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        height: 130,
-        alignment: Alignment.topLeft,
-        padding: EdgeInsets.all(20),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                  "20:13", //Подстановка из БД
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)
-              ),
-              flex: 2,
+    return ListView.builder(
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          child: Container(
+            width: MediaQuery
+                .of(context)
+                .size
+                .width,
+            height: 100,
+            alignment: Alignment.topLeft,
+            padding: EdgeInsets.all(20),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                      data![index].time, //Подстановка из БД
+                      style: TextStyle(
+                          fontSize: 30, fontWeight: FontWeight.bold)
+                  ),
+                  flex: 2,
+                ),
+                Expanded(
+                  child: Text(""),
+                  flex: 4,
+                ),
+                Expanded(
+                  child: ReminderCheckBox(data![index].id),
+                  flex: 1,
+                ),
+
+              ],
             ),
-            Expanded(
-              child: Text(""),
-              flex: 4,
-            ),
-            Expanded(
-              child: ReminderCheckBox(),
-              flex: 1,
+          ),
+        );
+      },
+      itemCount: data?.length??0,
+    );
+  }
+
+  buildBottomNavigationBar(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        print(deleteItems.toString());
+        deleteReminder(deleteItems);
+        Navigator.pop(context, true);
+      },
+      child:
+        Container(
+            color: Color(0xFFFFFBFE),
+            height: 70,
+            padding: EdgeInsets.only(top: 15),
+            child: Column(
+              children: [
+                Icon(
+                  Icons.delete,
+                  color: Color(0xFFE74C3C),
+                  size: 24,
+                ),
+                Text(
+                  "Удалить",
+                  style: TextStyle(
+                    color: Color(0xFFE74C3C),
+                  ),
+                ),
+              ],
             ),
 
-          ],
-        ),
+          ),
+        );
+  }
+
+
+}
+
+class ReminderCheckBox extends StatefulWidget {
+  int id;
+  ReminderCheckBox(int this.id, {super.key});
+
+  @override
+  State<ReminderCheckBox> createState() => _ReminderCheckBoxState(id);
+}
+
+class _ReminderCheckBoxState extends State<ReminderCheckBox> {
+  bool isChecked = false;
+  bool allCheck = false;
+  int id;
+
+  _ReminderCheckBoxState(int this.id);
+
+
+  @override
+  Widget build(BuildContext context) {
+    Color getColor(Set<MaterialState> states) {
+      const Set<MaterialState> interactiveStates = <MaterialState>{
+        MaterialState.pressed,
+        MaterialState.focused,
+      };
+      return Color.fromRGBO(41, 128, 185, 100);
+    }
+
+    return Transform.scale(
+      scale: 1.5,
+      child: Checkbox(
+        shape: CircleBorder(),
+        checkColor: Colors.white,
+        fillColor: MaterialStateProperty.resolveWith(getColor),
+        value: isChecked,
+        onChanged: (bool? value) {
+          changeArray(id, value);
+          setState(() {
+            isChecked = value!;
+          });
+        },
       ),
     );
   }
-}
 
+  void changeArray(int id, bool? value) {
+    if (value!){
+      deleteItems.add(id);
+    }
+    else{
+      deleteItems.remove(id);
+    }
+  }
+}
 
