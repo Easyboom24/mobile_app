@@ -182,8 +182,6 @@ class _MyEventPageState extends State<MyEventPage> {
     if (id_event > 0 && data != null && initFromData == false) {
       initFromData = true;
 
-      print(data!['event']);
-
       titleValue = data!['event']['title'];
       titleController.text = data!['event']['title'];
 

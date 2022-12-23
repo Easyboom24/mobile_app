@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:intl/intl.dart';
 import 'package:mobile_app/backend/models/EventCategoryModel.dart';
 import 'package:mobile_app/backend/models/EventModel.dart';
@@ -107,9 +109,16 @@ dynamic getMainData(int monthCode, int year) async {
 
   //events
   List eventsMaps = await DB.rawQuery(rawQueryEvents + optionWhereEvents);
+  List eventsMapsEditing = [];
+  for(var event in eventsMaps){
+    eventsMapsEditing.add(json.decode(json.encode(event)));
+  }
   List eventsModels = [];
 
-  for (var event in eventsMaps) {
+  for (var event in eventsMapsEditing) {
+    if(event['as_deleted'] != null) {
+      event['as_deleted'] = DateTime.parse(event['as_deleted']);
+    }
     eventsModels.add(EventModel.fromMap(event));
   }
   //events
