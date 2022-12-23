@@ -259,7 +259,7 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
 
   Widget buildChooseDate() {
     return Container(
-      width: 350,
+      width: 300,
       child: TextField(
         focusNode: dateFocus,
         controller: dateController,
@@ -613,8 +613,8 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
                           currentMood == i['id']
                               ? i['path_icon_selected']
                               : i['path_icon'],
-                          width: 65,
-                          height: 65,
+                          width: 55,
+                          height: 55,
                         ),
                       ),
                       onTap: () {
@@ -635,7 +635,7 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
 
   Widget buildComment() {
     return Container(
-      width: 350,
+      width: 300,
       child: Wrap(
         direction: Axis.vertical,
         crossAxisAlignment: WrapCrossAlignment.start,
@@ -654,7 +654,7 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
             ),
           ),
           Container(
-            width: 350,
+            width: 300,
             margin: EdgeInsets.only(top: 5, bottom: 5),
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -719,7 +719,7 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
 
   Widget buildEvents() {
     return Container(
-      width: 350,
+      width: 300,
       child: Wrap(
         direction: Axis.vertical,
         crossAxisAlignment: WrapCrossAlignment.start,
@@ -768,7 +768,7 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
                           top: 10,
                         ),
                         child: Container(
-                          width: 350,
+                          width: 300,
                           margin: EdgeInsets.only(top: 5, bottom: 5),
                           padding: EdgeInsets.all(16),
                           decoration: BoxDecoration(
