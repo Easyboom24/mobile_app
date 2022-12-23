@@ -792,77 +792,83 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              Wrap(
-                                direction: Axis.horizontal,
-                                crossAxisAlignment: WrapCrossAlignment.start,
-                                spacing: 10,
-                                children: category['events']
-                                    .map(
-                                      (event) => InkWell(
-                                        child: Wrap(
-                                          direction: Axis.vertical,
-                                          crossAxisAlignment:
-                                              WrapCrossAlignment.center,
-                                          spacing: 5,
-                                          children: [
-                                            Container(
-                                              width: 40,
-                                              height: 40,
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                  color: choseEvents
-                                                          .contains(event['id'])
-                                                      ? Color(0xFF2980B9)
-                                                      : Color(0xFFe2dde4),
-                                                  width: 1,
+                              Container(
+                                width: 268,
+                                child: Wrap(
+                                  direction: Axis.horizontal,
+                                  crossAxisAlignment: WrapCrossAlignment.start,
+                                  spacing: 10,
+                                  children: category['events']
+                                      .map(
+                                        (event) => InkWell(
+                                          child: Container(
+                                            margin: EdgeInsets.only(top: 5, bottom: 5,),
+                                            child: Wrap(
+                                              direction: Axis.vertical,
+                                              crossAxisAlignment:
+                                                  WrapCrossAlignment.center,
+                                              spacing: 5,
+                                              children: [
+                                                Container(
+                                                  width: 40,
+                                                  height: 40,
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                      color: choseEvents
+                                                              .contains(event['id'])
+                                                          ? Color(0xFF2980B9)
+                                                          : Color(0xFFe2dde4),
+                                                      width: 1,
+                                                    ),
+                                                    borderRadius: BorderRadius.all(
+                                                        Radius.circular(100)),
+                                                    color: choseEvents
+                                                            .contains(event['id'])
+                                                        ? Color(0xFF2980B9)
+                                                        : Color(0xFFe2dde4),
+                                                  ),
+                                                  child: Icon(
+                                                    IconData(
+                                                      int.parse(event['path_icon']),
+                                                      fontFamily: 'MaterialIcons',
+                                                    ),
+                                                    size: 24,
+                                                    color: choseEvents
+                                                            .contains(event['id'])
+                                                        ? Color(0xFFFFFFFF)
+                                                        : Color(0xFF49454F),
+                                                  ),
                                                 ),
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(100)),
-                                                color: choseEvents
-                                                        .contains(event['id'])
-                                                    ? Color(0xFF2980B9)
-                                                    : Color(0xFFe2dde4),
-                                              ),
-                                              child: Icon(
-                                                IconData(
-                                                  int.parse(event['path_icon']),
-                                                  fontFamily: 'MaterialIcons',
+                                                Text(
+                                                  "${event['title']}",
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                    letterSpacing: 0.5,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
                                                 ),
-                                                size: 24,
-                                                color: choseEvents
-                                                        .contains(event['id'])
-                                                    ? Color(0xFFFFFFFF)
-                                                    : Color(0xFF49454F),
-                                              ),
+                                              ],
                                             ),
-                                            Text(
-                                              "${event['title']}",
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                letterSpacing: 0.5,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ],
+                                          ),
+                                          onTap: () {
+                                            setState(() {
+                                              if (choseEvents
+                                                  .contains(event['id'])) {
+                                                choseEvents.remove(event['id']);
+                                              } else {
+                                                choseEvents.add(event['id']);
+                                              }
+                                            });
+                                          },
+                                          onLongPress: () {
+                                            Navigator.push(context,
+                                                MyEventPage.getRoute(event['id']));
+                                          },
                                         ),
-                                        onTap: () {
-                                          setState(() {
-                                            if (choseEvents
-                                                .contains(event['id'])) {
-                                              choseEvents.remove(event['id']);
-                                            } else {
-                                              choseEvents.add(event['id']);
-                                            }
-                                          });
-                                        },
-                                        onLongPress: () {
-                                          Navigator.push(context,
-                                              MyEventPage.getRoute(-1));
-                                        },
-                                      ),
-                                    )
-                                    .toList()
-                                    .cast<Widget>(),
+                                      )
+                                      .toList()
+                                      .cast<Widget>(),
+                                ),
                               ),
                             ],
                           ),
@@ -939,7 +945,7 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
                   int.parse(hourValue),
                   int.parse(minuteValue),
                   currentMood!,
-                  commentValue!,
+                  commentValue!.toString(),
                   choseEvents);
             } else {
               await createMyMood(
@@ -947,7 +953,7 @@ class _MyMyMoodPageState extends State<MyMyMoodPage> {
                   int.parse(hourValue),
                   int.parse(minuteValue),
                   currentMood!,
-                  commentValue!,
+                  commentValue!.toString(),
                   choseEvents);
             }
             Navigator.pop(context, true);
