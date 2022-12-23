@@ -1,19 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_color_generator/material_color_generator.dart';
+import 'package:mobile_app/backend/models/ReminderModel.dart';
 import '../../backend/controllers/reminderController.dart';
 import '../projectColors.dart';
 import '/backend/services/db.dart';
 import 'deleteReminder.dart';
 import 'newEditReminder.dart';
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  await DB.init();
-
-  runApp(const Reminder());
-}
 
 class Reminder extends StatelessWidget {
   const Reminder({super.key});
@@ -69,6 +62,23 @@ class ReminderPage extends StatefulWidget {
 }
 
 class _ReminderPageState extends State<ReminderPage> {
+
+  List<ReminderModel>? data;
+  @override
+  void initState() {
+    super.initState();
+    refreshData();
+  }
+
+  void refreshData() {
+    var tempData = getReminderData();
+    tempData.then((s) {
+      setState(() {
+        data = s;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -118,8 +128,9 @@ class _ReminderPageState extends State<ReminderPage> {
           ),
         ),
         IconButton(
-          onPressed: () {
-            Navigator.push(context, NewEditReminderPage.getRoute());
+          onPressed: () async {
+            await Navigator.push(context, NewEditReminderPage.getRoute(-1));
+            refreshData();
           },
           icon: Icon(
             Icons.add,
@@ -131,36 +142,47 @@ class _ReminderPageState extends State<ReminderPage> {
   }
 
   buildBodyMainPage(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(context, NewEditReminderPage.getRoute());
-      },
-      onLongPress: () {
-        Navigator.push(context, DeleteReminderPage.getRoute());
-      },
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        height: 130,
-        alignment: Alignment.topLeft,
-        padding: EdgeInsets.all(20),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: Text("20:13", //Подстановка из БД
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-              flex: 2,
+    return
+    data == null
+        ? Text("???")
+        : ListView.builder(
+        itemBuilder: (context, index){
+          return GestureDetector(
+            onTap: () async {
+              await Navigator.push(context, NewEditReminderPage.getRoute(data![index].id));
+              refreshData();
+            },
+            onLongPress: () async {
+              await Navigator.push(context, DeleteReminderPage.getRoute());
+              refreshData();
+            },
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 100,
+              alignment: Alignment.topLeft,
+              padding: EdgeInsets.all(20),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text(data![index].time, //Подстановка из БД
+                        style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                    flex: 2,
+                  ),
+                  Expanded(
+                    child: Text(""),
+                    flex: 4,
+                  ),
+                  Expanded(
+                    child: SwitchReminder(data![index].is_use),
+                    flex: 1,
+                  ),
+                ],
+              ),
             ),
-            Expanded(
-              child: Text(""),
-              flex: 4,
-            ),
-            Expanded(
-              child: SwitchReminder(),
-              flex: 1,
-            ),
-          ],
-        ),
-      ),
+          );
+        },
+        itemCount: data?.length??0,
     );
+
   }
 }
