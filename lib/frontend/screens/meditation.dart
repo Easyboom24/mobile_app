@@ -49,6 +49,7 @@ class _MeditationPageState extends State<MeditationPage> {
   int seconds = 0;
   int minutes = 0;
 
+  //var data;
   List<MeditationModel> data = List.empty();
   @override
   void initState() {
@@ -145,14 +146,22 @@ class _MeditationPageState extends State<MeditationPage> {
                     ),
                     Container(
                       child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: data
-                              .map(
-                                (i) => Container(
-                                  margin: EdgeInsets.only(right: 22),
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.22,
-                                  height: 85,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: data
+                            .map(
+                              (i) => InkWell(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(23),
+                                ),
+                                child: Container(
+                                  margin: data.indexOf(i) == data.length - 1
+                                      ? EdgeInsets.only(right: 0)
+                                      : EdgeInsets.only(right: 22),
+                                  width: data.indexOf(i) == 1
+                                      ? MediaQuery.of(context).size.width * 0.31
+                                      : MediaQuery.of(context).size.width *
+                                          0.22,
+                                  height: data.indexOf(i) == 1 ? 110 : 85,
                                   decoration: BoxDecoration(
                                     color: Color(0xFF2980B9),
                                     border: Border.all(
@@ -165,81 +174,28 @@ class _MeditationPageState extends State<MeditationPage> {
                                   ),
                                   child: SvgPicture.asset(
                                     i.path_icon,
-                                    // "assets/images/fire.svg",
                                     width: 70,
                                     height: 70,
                                   ),
                                 ),
-                              )
-                              .toList()
-                              .cast<Widget>()
-                          //[
-
-                          // Container(
-                          //   margin: EdgeInsets.only(right: 22),
-                          //   width: MediaQuery.of(context).size.width * 0.22,
-                          //   height: 85,
-                          //   decoration: BoxDecoration(
-                          //     color: Color(0xFF2980B9),
-                          //     border: Border.all(
-                          //       width: 1,
-                          //       color: Color(0xFF2980B9),
-                          //     ),
-                          //     borderRadius: BorderRadius.all(
-                          //       Radius.circular(23),
-                          //     ),
-                          //   ),
-                          //   child: SvgPicture.asset(
-                          //     "assets/images/fire.svg",
-                          //     width: 70,
-                          //     height: 70,
-                          //   ),
-                          // ),
-                          // Container(
-                          //   margin: EdgeInsets.only(right: 22),
-                          //   width: MediaQuery.of(context).size.width * 0.31,
-                          //   height: 110,
-                          //   decoration: BoxDecoration(
-                          //     color: Color(0xFF2980B9),
-                          //     border: Border.all(
-                          //       width: 1,
-                          //       color: Color(0xFF2980B9),
-                          //     ),
-                          //     borderRadius: BorderRadius.all(
-                          //       Radius.circular(23),
-                          //     ),
-                          //   ),
-                          //   child: SvgPicture.asset(
-                          //     "assets/images/rain.svg",
-                          //     width: 80,
-                          //     height: 80,
-                          //   ),
-                          // ),
-                          // Container(
-                          //   width: MediaQuery.of(context).size.width * 0.22,
-                          //   height: 85,
-                          //   decoration: BoxDecoration(
-                          //     color: Color(0xFF2980B9),
-                          //     border: Border.all(
-                          //       width: 1,
-                          //       color: Color(0xFF2980B9),
-                          //     ),
-                          //     borderRadius: BorderRadius.all(
-                          //       Radius.circular(23),
-                          //     ),
-                          //   ),
-                          //   child: SvgPicture.asset(
-                          //     "assets/images/wind.svg",
-                          //     width: 70,
-                          //     height: 70,
-                          //   ),
-                          // ),
-                          //],
-                          ),
+                                onTap: () {
+                                  setState(() {
+                                    var data1 = data[1];
+                                    var selectedIndex = data.indexOf(i);
+                                    data[1] = data[selectedIndex];
+                                    data[selectedIndex] = data1;
+                                  });
+                                },
+                              ),
+                            )
+                            .toList()
+                            .cast<Widget>(),
+                      ),
                     ),
                     Container(
                       child: Text(
-                        "Дождь",
+                        data[1].title,
+                        // "Дождь",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontFamily: "Roboto",
@@ -327,6 +283,13 @@ class _MeditationPageState extends State<MeditationPage> {
                                 ),
                               ),
                               cursorColor: Color(0xFFFFBB12),
+                              onChanged: (value) {
+                                try {
+                                  minutes = int.parse(value);
+                                } catch (e) {
+                                  minutes = 0;
+                                }
+                              },
                               onSubmitted: (value) {
                                 try {
                                   minutes = int.parse(value);
@@ -382,14 +345,16 @@ class _MeditationPageState extends State<MeditationPage> {
                                 ),
                               ),
                               cursorColor: Color(0xFFFFBB12),
+                              onChanged: (value) {
+                                try {
+                                  seconds = int.parse(value);
+                                } catch (e) {
+                                  seconds = 0;
+                                }
+                              },
                               onSubmitted: (value) {
                                 try {
-                                  if (int.parse(value) > 59) {
-                                    minutes = minutes + int.parse(value) ~/ 60;
-                                    seconds = (int.parse(value) % 60).toInt();
-                                  } else {
-                                    seconds = int.parse(value);
-                                  }
+                                  seconds = int.parse(value);
                                 } catch (e) {
                                   seconds = 0;
                                 }
@@ -453,7 +418,12 @@ class _MeditationPageState extends State<MeditationPage> {
                   ),
                 ),
                 onTap: () async {
-                  Navigator.push(context, PlayMeditationPage.getRoute());
+                  if (seconds > 59) {
+                    minutes = minutes + seconds ~/ 60;
+                    seconds = seconds % 60;
+                  }
+                  Navigator.push(context,
+                      PlayMeditationPage.getRoute(minutes, seconds, data[1]));
                 },
               ),
             ],
