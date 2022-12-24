@@ -173,9 +173,15 @@ class _MeditationPageState extends State<MeditationPage> {
                                     ),
                                   ),
                                   child: SvgPicture.asset(
+                                    width: data.indexOf(i) == 1
+                                        ? MediaQuery.of(context).size.width
+                                        : MediaQuery.of(context).size.width - 8,
+                                    height: data.indexOf(i) == 1
+                                        ? MediaQuery.of(context).size.height
+                                        : MediaQuery.of(context).size.height -
+                                            8,
+                                    fit: BoxFit.scaleDown,
                                     i.path_icon,
-                                    width: 70,
-                                    height: 70,
                                   ),
                                 ),
                                 onTap: () {

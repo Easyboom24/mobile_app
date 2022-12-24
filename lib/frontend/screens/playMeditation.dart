@@ -206,7 +206,14 @@ class _PlayMeditationPageState extends State<PlayMeditationPage> {
                     Radius.circular(23),
                   ),
                 ),
-                child: SvgPicture.asset(data.path_icon),
+                child: Container(
+                  child: SvgPicture.asset(
+                    data.path_icon,
+                    fit: BoxFit.scaleDown,
+                    width: MediaQuery.of(context).size.width - 5,
+                    height: MediaQuery.of(context).size.height - 5,
+                  ),
+                ),
               ),
               Container(
                 width: MediaQuery.of(context).size.width * 0.6,
