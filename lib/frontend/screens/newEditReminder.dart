@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:material_color_generator/material_color_generator.dart';
 import '../../backend/controllers/newEditReminderController.dart';
 import '../../backend/controllers/reminderController.dart';
@@ -8,8 +9,9 @@ import '/backend/services/db.dart';
 
 class EditReminder extends StatelessWidget {
   int id_my_mood;
+  String time;
 
-  EditReminder(int this.id_my_mood, {super.key});
+  EditReminder(int this.id_my_mood, String this.time, {super.key});
 
   // This widget is the root of your application.
   @override
@@ -28,15 +30,18 @@ class EditReminder extends StatelessWidget {
         // is not restarted.
         primarySwatch: generateMaterialColor(color: Color(0xFFFFFFFF)),
       ),
-      home: NewEditReminderPage(id_my_mood),
+      home: NewEditReminderPage(id_my_mood, time),
     );
   }
 }
 
 class NewEditReminderPage extends StatefulWidget {
   int id_my_mood;
-  static PageRouteBuilder getRoute(int id_my_mood) {
+  String time;
+
+  static PageRouteBuilder getRoute(int id_my_mood, String time) {
     id_my_mood = id_my_mood;
+    time = time;
     return PageRouteBuilder(
         transitionsBuilder: (_, animation, secondAnimation, child) {
           return FadeTransition(
@@ -44,11 +49,11 @@ class NewEditReminderPage extends StatefulWidget {
             child: child,
           );
         }, pageBuilder: (_, __, ___) {
-      return NewEditReminderPage(id_my_mood);
+      return NewEditReminderPage(id_my_mood, time);
     });
   }
 
-  NewEditReminderPage(int this.id_my_mood, {super.key});
+  NewEditReminderPage(int this.id_my_mood, String this.time, {super.key});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -60,14 +65,17 @@ class NewEditReminderPage extends StatefulWidget {
   // always marked "final".
 
   @override
-  State<NewEditReminderPage> createState() => _NewEditReminderPageState(id_my_mood);
+  State<NewEditReminderPage> createState() => _NewEditReminderPageState(id_my_mood, time);
 }
 
 class _NewEditReminderPageState extends State<NewEditReminderPage> {
 
   int id_reminder;
+  String time;
+  var timeArray;
 
-  _NewEditReminderPageState(int this.id_reminder);
+
+  _NewEditReminderPageState(int this.id_reminder, String this.time);
 
   bool initFromData = false;
 
@@ -89,8 +97,19 @@ class _NewEditReminderPageState extends State<NewEditReminderPage> {
   var minuteValue = null;
   bool minuteError = false;
 
+
   @override
   Widget build(BuildContext context) {
+    if (initFromData == false){
+      initFromData = true;
+      timeArray = time.split(':');
+      hourValue =  timeArray[0];
+      hourController.text = timeArray[0];
+      minuteValue =  timeArray[1];
+      minuteController.text = timeArray[1];
+      setState(() {});
+    }
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -191,6 +210,7 @@ class _NewEditReminderPageState extends State<NewEditReminderPage> {
                   width: 95,
                   height: 95,
                   child: TextField(
+
                     controller: hourController,
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(2),

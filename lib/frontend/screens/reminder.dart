@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:material_color_generator/material_color_generator.dart';
 import 'package:mobile_app/backend/models/ReminderModel.dart';
 import '../../backend/controllers/reminderController.dart';
@@ -73,7 +74,14 @@ class _ReminderPageState extends State<ReminderPage> {
     var tempData = getReminderData();
     tempData.then((s) {
       setState(() {
-        data = s;
+        try
+        {
+          data = s;
+        }
+        catch (exception)
+        {
+          data = null;
+        }
       });
     });
   }
@@ -128,7 +136,7 @@ class _ReminderPageState extends State<ReminderPage> {
         ),
         IconButton(
           onPressed: () async {
-            await Navigator.push(context, NewEditReminderPage.getRoute(-1));
+            await Navigator.push(context, NewEditReminderPage.getRoute(-1, DateFormat('HH:mm').format(DateTime.now())));
             refreshData();
           },
           icon: Icon(
@@ -150,7 +158,7 @@ class _ReminderPageState extends State<ReminderPage> {
         itemBuilder: (context, index){
           return GestureDetector(
             onTap: () async {
-              await Navigator.push(context, NewEditReminderPage.getRoute(data![index].id));
+              await Navigator.push(context, NewEditReminderPage.getRoute(data![index].id, data![index].time));
               refreshData();
             },
             onLongPress: () async {

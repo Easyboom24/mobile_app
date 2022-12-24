@@ -55,7 +55,6 @@ class NotificationApi{
     required DateTime scheduledDate,
     String? payload,
   }) async {
-    print(id);
     _notifications.schedule(
         id,
         title,
@@ -65,6 +64,7 @@ class NotificationApi{
         payload: payload,
         androidAllowWhileIdle: true,
     );
+    print(id);
   }
 
 
@@ -72,15 +72,17 @@ class NotificationApi{
     var notifs = await getReminderTimes();
     for (var elem in notifs){
       var array = elem['time'].toString().split(":");
+      int id = elem['id'];
       int hours = int.parse(array[0]);
       int minutes = int.parse(array[1]);
       DateTime now = DateTime.now();
       DateTime needsTime = DateTime(now.year, now.month, now.day, hours, minutes);
       if (now.compareTo(needsTime) != -1){
-        needsTime.add(Duration(days: 1));
+        needsTime = needsTime.add(Duration(days: 1));
       }
       print(needsTime);
-      NotificationApi.showScheduledNotification(
+      await NotificationApi.showScheduledNotification(
+        id: id,
         title: 'Настроение',
         body: 'Привет! Как твое настроение?',
         payload: 'Suck  some dick!',
@@ -92,6 +94,6 @@ class NotificationApi{
 
 getReminderTimes()
 async {
-  List ReminderMaps = await DB.rawQuery("SELECT (time) FROM ${ReminderModel.table} WHERE (is_use == 1) ORDER BY time");
+  List ReminderMaps = await DB.rawQuery("SELECT id, time FROM ${ReminderModel.table} WHERE (is_use == 1) ORDER BY time");
   return ReminderMaps;
 }
