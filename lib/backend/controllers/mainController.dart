@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:intl/intl.dart';
 import 'package:mobile_app/backend/models/EventCategoryModel.dart';
@@ -10,6 +11,11 @@ import 'package:mobile_app/backend/models/model.dart';
 import 'package:graphic/graphic.dart';
 
 import '../models/MoodModel.dart';
+
+double roundDouble(double value, int places){
+  num mod = pow(10.0, places);
+  return ((value * mod).round().toDouble() / mod);
+}
 
 String getTitle({int monthCode = 0, int year = 0}) {
   var months = {
@@ -172,7 +178,11 @@ dynamic getMainData(int monthCode, int year) async {
   }
 
   graphData.forEach((key, value) {
+    // value['date'] = value['date'].toString();
+    value['title'] = value['date'].toString();
+    value['day'] = value['date'].day.toString();
     value['avrgValue'] = value['sumValue'] / value['count'];
+    value['avrgValue'] = roundDouble(value['avrgValue'], 2);
   });
 
   List myMoodListOut = [];

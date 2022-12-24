@@ -101,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int tempSelectedMonthCode = DateTime.now().month;
   int tempSelectedYear = DateTime.now().year;
 
-  var data;
+  Map<String, dynamic>? data;
 
   @override
   void initState() {
@@ -169,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
               fontWeight: FontWeight.w500,
             ),
           ),
-          onTap: (){
+          onTap: () {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
@@ -371,24 +371,74 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget buildGraph(BuildContext context) {
-    // print(data);
-    return Container();
-    // return Container(
-    //   child: Chart(
-    //     data: data['graphData'].cast(List<Map<String, dynamic>>),
-    //     variables: {
-    //       'argValue': Variable(
-    //         accessor: (Map map) =>
-    //             map['avrgValue'] as num,
-    //       ),
-    //     },
-    //     elements: [IntervalElement()],
-    //     axes: [
-    //       Defaults.horizontalAxis,
-    //       Defaults.verticalAxis,
-    //     ],
-    //   ),
-    // );
+
+    final dateFormat = DateFormat('dd.MM.yyyy HH:mm:ss');
+    // return Container();
+    return Container(
+      margin: const EdgeInsets.only(top: 10),
+      width: 300,
+      height: 300,
+      child: Chart(
+        data: data!['graphData'].cast<Map<dynamic, dynamic>>(),
+        variables: {
+          'day': Variable(
+            accessor: (Map map) => map['day'] as String,
+            scale: OrdinalScale(tickCount: 5, inflate: true),
+          ),
+          'avrgValue': Variable(
+            accessor: (Map map) => map['avrgValue'] as num,
+          ),
+          'title': Variable(
+            accessor: (Map map) => map['title'] as String,
+          )
+        },
+        elements: [
+          LineElement(
+            position:
+            Varset('day') * Varset('avrgValue'),
+            shape: ShapeAttr(value: BasicLineShape(smooth: false)),
+            selected: {
+              'touchMove': {1}
+            },
+          ),
+          PointElement(
+            color: ColorAttr(
+              variable: 'title',
+              values: Defaults.colors10,
+              updaters: {
+                'groupMouse': {
+                  false: (color) => color.withAlpha(100)
+                },
+                'groupTouch': {
+                  false: (color) => color.withAlpha(100)
+                },
+              },
+            ),
+          ),
+        ],
+        coord: RectCoord(color: const Color(0xffdddddd)),
+        axes: [
+          Defaults.horizontalAxis,
+          Defaults.verticalAxis,
+        ],
+        selections: {
+          'touchMove': PointSelection(
+            on: {
+              GestureType.scaleUpdate,
+              GestureType.tapDown,
+              GestureType.longPressMoveUpdate
+            },
+            dim: Dim.x,
+          )
+        },
+        tooltip: TooltipGuide(
+          followPointer: [false, true],
+          align: Alignment.topLeft,
+          offset: const Offset(-20, -20),
+        ),
+        crosshair: CrosshairGuide(followPointer: [false, true]),
+      ),
+    );
   }
 
   Widget buildEventsCount(BuildContext context) {
@@ -434,10 +484,13 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             child: Wrap(
               spacing: 10,
-              children: data['eventsCount']
+              children: data!['eventsCount']
                   .map(
                     (i) => Container(
-                      margin: EdgeInsets.only(top: 5, bottom: 5,),
+                      margin: EdgeInsets.only(
+                        top: 5,
+                        bottom: 5,
+                      ),
                       child: (Column(
                         children: [
                           BadgeWidget.Badge(
@@ -472,9 +525,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           Text(
                             '${i.value['title']}',
                             style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12,
-                                letterSpacing: 0.5,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                              letterSpacing: 0.5,
                             ),
                           ),
                         ],
@@ -523,7 +576,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Wrap(
               direction: Axis.vertical,
               spacing: 16,
-              children: data['myMoodList']
+              children: data!['myMoodList']
                   .map(
                     (i) => InkWell(
                       onLongPress: () async {
@@ -645,7 +698,12 @@ class _MyHomePageState extends State<MyHomePage> {
         elevation: 0,
         iconSize: 30,
         onTap: (int index) async {
-          if (index == 1) {
+          if (index == 0) {
+            if(data != null){
+              print(data!['graphData']);
+            }
+            //TODO: убери
+          } else if (index == 1) {
             await Navigator.push(context, MyMyMoodPage.getRoute(-1));
           } else if (index == 2) {
             Navigator.push(context, MeditationPage.getRoute());
