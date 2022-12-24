@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -11,7 +12,10 @@ import '/backend/services/db.dart';
 import 'package:mobile_app/frontend/screens/newMyMood.dart';
 
 class PlayMeditation extends StatelessWidget {
-  const PlayMeditation({Key? key}) : super(key: key);
+  final int minutes;
+  final int seconds;
+  const PlayMeditation({Key? key, required this.minutes, required this.seconds})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +30,7 @@ class PlayMeditation extends StatelessWidget {
 }
 
 class PlayMeditationPage extends StatefulWidget {
-  const PlayMeditationPage({Key? key}) : super(key: key);
+  PlayMeditationPage({Key? key}) : super(key: key) {}
 
   static PageRouteBuilder getRoute() {
     return PageRouteBuilder(
@@ -46,31 +50,46 @@ class PlayMeditationPage extends StatefulWidget {
 
 class _PlayMeditationPageState extends State<PlayMeditationPage> {
   final audioPlayer = AudioPlayer();
-  bool isPlaying = false;
-  Duration duration = Duration.zero;
-  Duration position = Duration.zero;
+  bool isPlaying = true;
+
+  double _currentSliderValue = 50;
+  int _timeLeft = 60;
+
+  int minutes = 5;
+  int seconds = 40;
+  Timer? timer;
+
+  void _startCountDown() {
+    timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      setState(() {
+        if ((seconds > 0 && minutes >= 0) || (seconds >= 0 && minutes > 0)) {
+          if (seconds > 0) {
+            seconds--;
+          } else {
+            minutes--;
+            seconds = 59;
+          }
+        } else {
+          _stopTimer();
+          audioPlayer.stop();
+          Navigator.pop(context);
+        }
+      });
+    });
+  }
+
+  void _stopTimer() {
+    timer?.cancel();
+  }
 
   @override
   void initState() {
     super.initState();
 
     setAudio();
-
     audioPlayer.onPlayerStateChanged.listen((state) {
       setState(() {
         isPlaying = state == PlayerState.PLAYING;
-      });
-    });
-
-    audioPlayer.onDurationChanged.listen((newDuration) {
-      setState(() {
-        duration = newDuration;
-      });
-    });
-
-    audioPlayer.onAudioPositionChanged.listen((newPosition) {
-      setState(() {
-        position = newPosition;
       });
     });
   }
@@ -78,8 +97,11 @@ class _PlayMeditationPageState extends State<PlayMeditationPage> {
   Future setAudio() async {
     audioPlayer.setReleaseMode(ReleaseMode.LOOP);
     final player = AudioCache(prefix: 'assets/audio/');
-    final url = await player.load('fire.mp3');
+    final url = await player.load('rain.mp3');
+    await audioPlayer.setVolume(_currentSliderValue / 100);
     await audioPlayer.setUrl(url.path, isLocal: true);
+    await audioPlayer.resume();
+    _startCountDown();
   }
 
   @override
@@ -174,16 +196,25 @@ class _PlayMeditationPageState extends State<PlayMeditationPage> {
                 ),
                 child: SvgPicture.asset("assets/images/rain.svg"),
               ),
-              // Slider(
-              //   value: 0,
-              //   max: 100,
-              //   divisions: 100,
-              //   onChanged: (double value) {
-              //     setState(() {
-              //       _currentSliderValue = value;
-              // })
+              Container(
+                width: MediaQuery.of(context).size.width * 0.6,
+                child: Slider(
+                  activeColor: Color(0xff6750a4),
+                  inactiveColor: Color(0xffE7E0EC),
+                  value: _currentSliderValue,
+                  max: 100,
+                  divisions: 100,
+                  label: _currentSliderValue.round().toString(),
+                  onChanged: (double value) {
+                    setState(() {
+                      _currentSliderValue = value;
+                      audioPlayer.setVolume(value / 100);
+                    });
+                  },
+                ),
+              ),
               Text(
-                "03:00",
+                "${minutes >= 10 ? minutes.toString() : "0" + minutes.toString()}:${seconds >= 10 ? seconds.toString() : "0" + seconds.toString()}",
                 style: TextStyle(
                   fontFamily: 'Roboto',
                   fontSize: 40,
@@ -191,21 +222,29 @@ class _PlayMeditationPageState extends State<PlayMeditationPage> {
                   color: Color(0xff000000),
                 ),
               ),
-              CircleAvatar(
-                radius: 35,
-                child: IconButton(
-                  icon: Icon(
-                    isPlaying ? Icons.pause : Icons.play_arrow,
+              SizedBox(height: 20),
+              InkWell(
+                borderRadius: BorderRadius.circular(15),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Color(0xff6750a4),
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  iconSize: 50,
-                  onPressed: () async {
-                    if (isPlaying) {
-                      await audioPlayer.pause();
-                    } else {
-                      await audioPlayer.resume();
-                    }
-                  },
+                  child: Icon(
+                    isPlaying ? Icons.pause_rounded : Icons.play_arrow,
+                    size: MediaQuery.of(context).size.width * 0.16,
+                    color: Colors.white,
+                  ),
                 ),
+                onTap: () async {
+                  if (isPlaying) {
+                    await audioPlayer.pause();
+                    _stopTimer();
+                  } else {
+                    await audioPlayer.resume();
+                    _startCountDown();
+                  }
+                },
               ),
             ],
           ),

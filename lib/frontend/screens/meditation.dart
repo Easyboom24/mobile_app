@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:material_color_generator/material_color_generator.dart';
+import 'package:mobile_app/backend/models/MeditationModel.dart';
 import '../projectColors.dart';
 import '../../main.dart';
-import '/backend/services/db.dart';
+import 'package:mobile_app/backend/models/MeditationModel.dart';
+import '../../backend/controllers/meditationController.dart';
 import 'package:mobile_app/frontend/screens/newMyMood.dart';
 import 'package:mobile_app/frontend/screens/playMeditation.dart';
 
@@ -44,6 +46,24 @@ class MeditationPage extends StatefulWidget {
 
 class _MeditationPageState extends State<MeditationPage> {
   _MeditationPageState();
+  int seconds = 0;
+  int minutes = 0;
+
+  List<MeditationModel> data = List.empty();
+  @override
+  void initState() {
+    super.initState();
+    refreshData();
+  }
+
+  void refreshData() {
+    var tempData = getMeditationData();
+    tempData.then((s) {
+      setState(() {
+        data = s;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,69 +145,97 @@ class _MeditationPageState extends State<MeditationPage> {
                     ),
                     Container(
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Container(
-                            margin: EdgeInsets.only(right: 22),
-                            width: MediaQuery.of(context).size.width * 0.22,
-                            height: 85,
-                            decoration: BoxDecoration(
-                              color: Color(0xFF2980B9),
-                              border: Border.all(
-                                width: 1,
-                                color: Color(0xFF2980B9),
-                              ),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(23),
-                              ),
-                            ),
-                            child: SvgPicture.asset(
-                              "assets/images/fire.svg",
-                              width: 70,
-                              height: 70,
-                            ),
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: data
+                              .map(
+                                (i) => Container(
+                                  margin: EdgeInsets.only(right: 22),
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.22,
+                                  height: 85,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFF2980B9),
+                                    border: Border.all(
+                                      width: 1,
+                                      color: Color(0xFF2980B9),
+                                    ),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(23),
+                                    ),
+                                  ),
+                                  child: SvgPicture.asset(
+                                    i.path_icon,
+                                    // "assets/images/fire.svg",
+                                    width: 70,
+                                    height: 70,
+                                  ),
+                                ),
+                              )
+                              .toList()
+                              .cast<Widget>()
+                          //[
+
+                          // Container(
+                          //   margin: EdgeInsets.only(right: 22),
+                          //   width: MediaQuery.of(context).size.width * 0.22,
+                          //   height: 85,
+                          //   decoration: BoxDecoration(
+                          //     color: Color(0xFF2980B9),
+                          //     border: Border.all(
+                          //       width: 1,
+                          //       color: Color(0xFF2980B9),
+                          //     ),
+                          //     borderRadius: BorderRadius.all(
+                          //       Radius.circular(23),
+                          //     ),
+                          //   ),
+                          //   child: SvgPicture.asset(
+                          //     "assets/images/fire.svg",
+                          //     width: 70,
+                          //     height: 70,
+                          //   ),
+                          // ),
+                          // Container(
+                          //   margin: EdgeInsets.only(right: 22),
+                          //   width: MediaQuery.of(context).size.width * 0.31,
+                          //   height: 110,
+                          //   decoration: BoxDecoration(
+                          //     color: Color(0xFF2980B9),
+                          //     border: Border.all(
+                          //       width: 1,
+                          //       color: Color(0xFF2980B9),
+                          //     ),
+                          //     borderRadius: BorderRadius.all(
+                          //       Radius.circular(23),
+                          //     ),
+                          //   ),
+                          //   child: SvgPicture.asset(
+                          //     "assets/images/rain.svg",
+                          //     width: 80,
+                          //     height: 80,
+                          //   ),
+                          // ),
+                          // Container(
+                          //   width: MediaQuery.of(context).size.width * 0.22,
+                          //   height: 85,
+                          //   decoration: BoxDecoration(
+                          //     color: Color(0xFF2980B9),
+                          //     border: Border.all(
+                          //       width: 1,
+                          //       color: Color(0xFF2980B9),
+                          //     ),
+                          //     borderRadius: BorderRadius.all(
+                          //       Radius.circular(23),
+                          //     ),
+                          //   ),
+                          //   child: SvgPicture.asset(
+                          //     "assets/images/wind.svg",
+                          //     width: 70,
+                          //     height: 70,
+                          //   ),
+                          // ),
+                          //],
                           ),
-                          Container(
-                            margin: EdgeInsets.only(right: 22),
-                            width: MediaQuery.of(context).size.width * 0.31,
-                            height: 110,
-                            decoration: BoxDecoration(
-                              color: Color(0xFF2980B9),
-                              border: Border.all(
-                                width: 1,
-                                color: Color(0xFF2980B9),
-                              ),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(23),
-                              ),
-                            ),
-                            child: SvgPicture.asset(
-                              "assets/images/rain.svg",
-                              width: 80,
-                              height: 80,
-                            ),
-                          ),
-                          Container(
-                            width: MediaQuery.of(context).size.width * 0.22,
-                            height: 85,
-                            decoration: BoxDecoration(
-                              color: Color(0xFF2980B9),
-                              border: Border.all(
-                                width: 1,
-                                color: Color(0xFF2980B9),
-                              ),
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(23),
-                              ),
-                            ),
-                            child: SvgPicture.asset(
-                              "assets/images/wind.svg",
-                              width: 70,
-                              height: 70,
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                     Container(
                       child: Text(
@@ -246,8 +294,10 @@ class _MeditationPageState extends State<MeditationPage> {
                             width: 95,
                             height: 95,
                             child: TextField(
+                              keyboardType: TextInputType.number,
                               inputFormatters: [
-                                LengthLimitingTextInputFormatter(3),
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(2),
                               ],
                               textAlignVertical: TextAlignVertical.center,
                               textAlign: TextAlign.center,
@@ -264,13 +314,11 @@ class _MeditationPageState extends State<MeditationPage> {
                                   top: 1,
                                 ),
                                 filled: true,
-
                                 helperText: "Минуты",
                                 helperStyle: TextStyle(
                                   color: Colors.black,
                                   fontSize: 12,
                                 ),
-
                                 focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(
                                     color: Color(0xFFFFBB12),
@@ -279,6 +327,13 @@ class _MeditationPageState extends State<MeditationPage> {
                                 ),
                               ),
                               cursorColor: Color(0xFFFFBB12),
+                              onSubmitted: (value) {
+                                try {
+                                  minutes = int.parse(value);
+                                } catch (e) {
+                                  minutes = 0;
+                                }
+                              },
                             ),
                           ),
                           Text(
@@ -292,8 +347,10 @@ class _MeditationPageState extends State<MeditationPage> {
                             width: 95,
                             height: 95,
                             child: TextField(
+                              keyboardType: TextInputType.number,
                               inputFormatters: [
-                                LengthLimitingTextInputFormatter(3),
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(2),
                               ],
                               textAlignVertical: TextAlignVertical.center,
                               textAlign: TextAlign.center,
@@ -325,6 +382,18 @@ class _MeditationPageState extends State<MeditationPage> {
                                 ),
                               ),
                               cursorColor: Color(0xFFFFBB12),
+                              onSubmitted: (value) {
+                                try {
+                                  if (int.parse(value) > 59) {
+                                    minutes = minutes + int.parse(value) ~/ 60;
+                                    seconds = (int.parse(value) % 60).toInt();
+                                  } else {
+                                    seconds = int.parse(value);
+                                  }
+                                } catch (e) {
+                                  seconds = 0;
+                                }
+                              },
                             ),
                           ),
                         ],
