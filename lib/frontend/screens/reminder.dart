@@ -4,7 +4,6 @@ import 'package:material_color_generator/material_color_generator.dart';
 import 'package:mobile_app/backend/models/ReminderModel.dart';
 import '../../backend/controllers/reminderController.dart';
 import '../projectColors.dart';
-import '/backend/services/db.dart';
 import 'deleteReminder.dart';
 import 'newEditReminder.dart';
 
@@ -144,7 +143,9 @@ class _ReminderPageState extends State<ReminderPage> {
   buildBodyMainPage(BuildContext context) {
     return
     data == null
-        ? Text("???")
+        ? Center(
+      child: Text("Напоминаний нет"),
+    )
         : ListView.builder(
         itemBuilder: (context, index){
           return GestureDetector(
@@ -173,7 +174,7 @@ class _ReminderPageState extends State<ReminderPage> {
                     flex: 4,
                   ),
                   Expanded(
-                    child: SwitchReminder(data![index].is_use),
+                    child: SwitchReminder(data![index].is_use, data![index].id,),
                     flex: 1,
                   ),
                 ],
