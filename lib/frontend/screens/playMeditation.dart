@@ -6,16 +6,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:material_color_generator/material_color_generator.dart';
+import 'package:mobile_app/backend/models/MeditationModel.dart';
 import '../projectColors.dart';
 import '../../main.dart';
 import '/backend/services/db.dart';
 import 'package:mobile_app/frontend/screens/newMyMood.dart';
 
 class PlayMeditation extends StatelessWidget {
-  final int minutes;
-  final int seconds;
-  const PlayMeditation({Key? key, required this.minutes, required this.seconds})
-      : super(key: key);
+  int minutes;
+  int seconds;
+  MeditationModel data;
+  PlayMeditation(int this.minutes, int this.seconds, MeditationModel this.data,
+      {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,15 +26,24 @@ class PlayMeditation extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: generateMaterialColor(color: Color(0xFFFFFFFF)),
       ),
-      home: PlayMeditationPage(),
+      home: PlayMeditationPage(minutes, seconds, data),
     );
   }
 }
 
 class PlayMeditationPage extends StatefulWidget {
-  PlayMeditationPage({Key? key}) : super(key: key) {}
+  int minutes;
+  int seconds;
+  MeditationModel data;
+  PlayMeditationPage(
+      int this.minutes, int this.seconds, MeditationModel this.data,
+      {super.key});
 
-  static PageRouteBuilder getRoute() {
+  static PageRouteBuilder getRoute(
+      int minutes, int seconds, MeditationModel data) {
+    minutes = minutes;
+    seconds = seconds;
+    data = data;
     return PageRouteBuilder(
         transitionsBuilder: (_, animation, secondAnimation, child) {
       return FadeTransition(
@@ -40,23 +51,24 @@ class PlayMeditationPage extends StatefulWidget {
         child: child,
       );
     }, pageBuilder: (_, __, ___) {
-      return PlayMeditationPage();
+      return PlayMeditationPage(minutes, seconds, data);
     });
   }
 
   @override
-  _PlayMeditationPageState createState() => _PlayMeditationPageState();
+  _PlayMeditationPageState createState() =>
+      _PlayMeditationPageState(minutes, seconds, data);
 }
 
 class _PlayMeditationPageState extends State<PlayMeditationPage> {
+  int minutes;
+  int seconds;
+  MeditationModel data;
+  _PlayMeditationPageState(
+      int this.minutes, int this.seconds, MeditationModel this.data);
   final audioPlayer = AudioPlayer();
   bool isPlaying = true;
-
   double _currentSliderValue = 50;
-  int _timeLeft = 60;
-
-  int minutes = 5;
-  int seconds = 40;
   Timer? timer;
 
   void _startCountDown() {
@@ -97,7 +109,7 @@ class _PlayMeditationPageState extends State<PlayMeditationPage> {
   Future setAudio() async {
     audioPlayer.setReleaseMode(ReleaseMode.LOOP);
     final player = AudioCache(prefix: 'assets/audio/');
-    final url = await player.load('rain.mp3');
+    final url = await player.load(data.path_sound);
     await audioPlayer.setVolume(_currentSliderValue / 100);
     await audioPlayer.setUrl(url.path, isLocal: true);
     await audioPlayer.resume();
@@ -169,7 +181,7 @@ class _PlayMeditationPageState extends State<PlayMeditationPage> {
             children: [
               Container(
                 child: Text(
-                  'Дождь',
+                  data.title,
                   style: TextStyle(
                     fontFamily: 'Roboto',
                     fontSize: 16,
@@ -194,7 +206,7 @@ class _PlayMeditationPageState extends State<PlayMeditationPage> {
                     Radius.circular(23),
                   ),
                 ),
-                child: SvgPicture.asset("assets/images/rain.svg"),
+                child: SvgPicture.asset(data.path_icon),
               ),
               Container(
                 width: MediaQuery.of(context).size.width * 0.6,
