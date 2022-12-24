@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:graphic/graphic.dart';
 import 'package:material_color_generator/material_color_generator.dart';
+import 'package:mobile_app/backend/controllers/notifications.dart';
 
 import 'package:mobile_app/backend/services/db.dart';
 import 'package:mobile_app/frontend/projectColors.dart';
@@ -106,6 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    NotificationApi.reminderNotif();
     refreshData();
   }
 

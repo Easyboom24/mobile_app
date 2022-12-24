@@ -1,8 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:timezone/data/latest.dart' as tz;
-import 'package:timezone/timezone.dart' as tz;
-import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+
+import '../models/ReminderModel.dart';
+import '../services/db.dart';
 
 class NotificationApi{
   static final _notifications = FlutterLocalNotificationsPlugin();
@@ -65,12 +67,31 @@ class NotificationApi{
     );
   }
 
-  static void reminderNotif(){
-    NotificationApi.showScheduledNotification(
-      title: 'Настроение',
-      body: 'Привет! Как твое настроение?',
-      payload: 'Suck  some dick!',
-      scheduledDate: DateTime.now().add(Duration(seconds: 5)),
-    );
+
+  static Future<void> reminderNotif() async {
+    var notifs = await getReminderTimes();
+    for (var elem in notifs){
+      var array = elem['time'].toString().split(":");
+      int hours = int.parse(array[0]);
+      int minutes = int.parse(array[1]);
+      DateTime now = DateTime.now();
+      DateTime needsTime = DateTime(now.year, now.month, now.day, hours, minutes);
+      if (now.compareTo(needsTime) != -1){
+        needsTime.add(Duration(days: 1));
+      }
+      print(needsTime);
+      NotificationApi.showScheduledNotification(
+        title: 'Настроение',
+        body: 'Привет! Как твое настроение?',
+        payload: 'Suck  some dick!',
+        scheduledDate: needsTime,
+      );
+    }
   }
+}
+
+getReminderTimes()
+async {
+  List ReminderMaps = await DB.rawQuery("SELECT (time) FROM ${ReminderModel.table} WHERE (is_use == 1) ORDER BY time");
+  return ReminderMaps;
 }
