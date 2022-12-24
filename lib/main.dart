@@ -385,10 +385,11 @@ class _MyHomePageState extends State<MyHomePage> {
         variables: {
           'day': Variable(
             accessor: (Map map) => map['day'] as String,
-            scale: OrdinalScale(tickCount: 5, inflate: true),
+            scale: OrdinalScale(tickCount: 31, inflate: true),
           ),
           'avrgValue': Variable(
             accessor: (Map map) => map['avrgValue'] as num,
+            scale:LinearScale(min: -1, max: 6,),
           ),
           'title': Variable(
             accessor: (Map map) => map['title'] as String,
@@ -434,9 +435,13 @@ class _MyHomePageState extends State<MyHomePage> {
           )
         },
         tooltip: TooltipGuide(
-          followPointer: [false, true],
+          followPointer: [true, true],
           align: Alignment.topLeft,
           offset: const Offset(-20, -20),
+          variables: [
+            'day',
+            'avrgValue',
+          ],
         ),
         crosshair: CrosshairGuide(followPointer: [false, true]),
       ),
